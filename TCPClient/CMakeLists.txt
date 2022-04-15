@@ -5,19 +5,34 @@ cmake_minimum_required (VERSION 3.8)
 
 project(TCPClient)
 
+set(CMAKE_CXX_STANDARD 20)
+
+if (LOG_ON)
+	add_compile_definitions("LOG_ON")
+endif ()
+
 include_directories("C:/lib/asio-1.22.1/include")
 
 set(NETWORKING_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
-set(TCP_CLIENT_DIR "${NETWORKING_DIR}/tcp/client")
+set(NETLIB_DIR "${NETWORKING_DIR}/netlib/")
 
-include_directories("${TCP_CLIENT_DIR}")
+include_directories("${NETLIB_DIR}")
 include_directories("${NETWORKING_DIR}")
 include_directories("${NETWORKING_DIR}/include")
 
-message("TCPClient TCP_CLIENT_DIR: '${TCP_CLIENT_DIR}'")
+message("TCPClient NETLIB_DIR: '${NETLIB_DIR}'")
 
-add_subdirectory("${TCP_CLIENT_DIR}" "${TCP_CLIENT_DIR}/out")
+if (NETLIB_EXTERNAL)
+else()
+	if (CMAKE_CXX_COMPILER EQUAL "g++")
+		set(NETLIB_BUILD_DIR_NAME "Build-g++")
+	else ()
+		set(NETLIB_BUILD_DIR_NAME "Build-cmake")
+	endif ()
+	add_subdirectory("${NETLIB_DIR}" "${NETLIB_DIR}/${NETLIB_BUILD_DIR_NAME}")
+endif()
+
 
 add_executable (TCPClient "TCPClient.cpp" "TCPClient.h")
 
-target_link_libraries(TCPClient tcp_client)
+target_link_libraries(TCPClient netlib)
