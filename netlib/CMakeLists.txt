@@ -11,6 +11,8 @@ if (LOG_ON)
 	add_compile_definitions("LOG_ON")
 endif ()
 
+message("Asio path: '${ASIO_PATH}'")
+
 include_directories("${ASIO_PATH}")
 
 set(NETWORKING_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
