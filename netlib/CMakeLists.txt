@@ -14,13 +14,10 @@ endif ()
 message("Asio path: '${ASIO_PATH}'")
 
 include_directories("${ASIO_PATH}")
-
-set(NETWORKING_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
-
-include_directories("${NETWORKING_DIR}")
-include_directories("${NETWORKING_DIR}/netlib")
-include_directories("${NETWORKING_DIR}/include")
+include_directories(".")
+include_directories("common")
 
 file(GLOB SRC CONFIGURE_DEPENDS "tcp/src/*")
-file(GLOB HEADERS "tcp/*")
+file(GLOB HEADERS "tcp/* common/*")
+
 add_library(netlib ${SRC} ${HEADERS})

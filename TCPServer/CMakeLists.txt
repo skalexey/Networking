@@ -11,7 +11,7 @@ if (LOG_ON)
 	add_compile_definitions("LOG_ON")
 endif ()
 
-include_directories("C:/lib/asio-1.22.1/include")
+include_directories("${ASIO_PATH}")
 
 set(NETWORKING_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
 set(NETLIB_DIR "${NETWORKING_DIR}/netlib/")
