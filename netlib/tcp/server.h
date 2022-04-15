@@ -25,8 +25,9 @@ namespace anp
 		class server
 		{
 		public:
-			server(int port);
-			bool start();
+			server();
+			bool is_active() const;
+			bool start(int port);
 			void stop();
 			void set_on_receive(const on_client_data_cb& cb);
 
@@ -35,8 +36,8 @@ namespace anp
 			virtual bool OnClientConnect(const connection_ptr& connection);
 
 		private:
-			asio::io_context m_ctx;
-			asio::ip::tcp::acceptor m_acceptor;
+			std::unique_ptr<asio::io_context> m_ctx;
+			std::unique_ptr<asio::ip::tcp::acceptor> m_acceptor;
 			std::thread m_thr_ctx;
 			on_client_data_cb m_on_receive;
 			std::vector<connection_ptr> m_connecions;

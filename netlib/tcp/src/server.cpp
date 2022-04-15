@@ -1,17 +1,7 @@
 ﻿// server.cpp : Defines the entry point for the application.
 //
 
-#ifndef _WIN32_WINNT
-	#ifdef _WIN32
-		#define _WIN32_WINNT 0x0A00
-	#endif
-#endif
-#ifndef ASIO_STANDALONE
-	#define ASIO_STANDALONE
-#endif
 #include <asio/ts/buffer.hpp>
-#include <asio.hpp>
-#include <asio/ts/internet.hpp>
 #include "tcp/server.h"
 #include "Log.h"
 SET_LOG_VERBOSE(true)
@@ -27,10 +17,8 @@ namespace anp
 {
 	namespace tcp
 	{
-		server::server(int port)
-			: m_acceptor(m_ctx, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
+		server::server()
 		{
-
 		}
 
 		void server::set_on_receive(const on_client_data_cb& cb)
@@ -40,7 +28,12 @@ namespace anp
 
 		void server::WaitClientConnection()
 		{
-			m_acceptor.async_accept(
+			if (!m_acceptor)
+			{
+				LOCAL_WARNING("WaitClientConnection called while the server is not initialized");
+				return;
+			}
+			m_acceptor->async_accept(
 				[this](std::error_code ec, asio::ip::tcp::socket socket)
 				{
 					if (!ec)
@@ -48,7 +41,7 @@ namespace anp
 						LOCAL_VERBOSE("[SERVER] New Connection: " << socket.remote_endpoint());
 
 						connection_ptr c =
-							std::make_shared<connection>(m_ctx, std::move(socket), m_conn_id++);
+							std::make_shared<connection>(*m_ctx, std::move(socket), m_conn_id++);
 						c->set_on_receive(m_on_receive);
 						// Give the user server a chance to deny connection
 						if (OnClientConnect(c))
@@ -76,8 +69,22 @@ namespace anp
 			return true;
 		}
 
-		bool server::start()
+		bool server::is_active() const
 		{
+			return m_ctx != nullptr;
+		}
+
+		bool server::start(int port)
+		{
+			LOCAL_VERBOSE("Starting on port " << port << " ...");
+			m_ctx = std::make_unique<asio::io_context>();
+			m_acceptor = std::make_unique< asio::ip::tcp::acceptor>(
+				*m_ctx
+				, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)
+			);
+			
+			LOCAL_VERBOSE("Context initialized");
+			
 			if (m_thr_ctx.joinable())
 			{
 				LOCAL_WARNING("Attempt to run start when the server is already started");
@@ -87,15 +94,18 @@ namespace anp
 			try
 			{
 				WaitClientConnection();
-				m_thr_ctx = std::thread([this]() { m_ctx.run(); });
+				m_thr_ctx = std::thread([this]() { m_ctx->run(); });
 				ctx_thread_id = m_thr_ctx.get_id();
+
 				LOCAL_VERBOSE("Started");
 			}
 			catch (std::exception& e)
 			{
-				LOCAL_WARNING("Error while starting");
+				LOCAL_WARNING("Error while starting: '" << e.what() << "'");
 				return false;
 			}
+
+			return true;
 		}
 		void server::stop()
 		{
@@ -111,16 +121,18 @@ namespace anp
 				m_connecions.clear();
 			};
 			if (std::this_thread::get_id() != ctx_thread_id)
-				asio::post(m_ctx, [=] {
+				asio::post(*m_ctx, [=] {
 					doClose();
 				});
 			else
 				doClose();
 			
 
-			m_ctx.stop();
+			m_ctx->stop();
 			if (m_thr_ctx.joinable())
 				m_thr_ctx.join();
+			m_acceptor.reset();
+			m_ctx.reset();
 			LOCAL_VERBOSE("Stopped");
 		}
 	}

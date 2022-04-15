@@ -33,7 +33,7 @@ namespace anp
 		{
 			if (is_connected())
 				disconnect();
-			LOCAL_VERBOSE("Connect...");
+			LOCAL_VERBOSE("Connect to '" << host << ":" << port << " ...");
 			LOCAL_VERBOSE("	Create resources");
 			asio::error_code ec;
 			m_ctx = std::make_unique<asio::io_context>();
