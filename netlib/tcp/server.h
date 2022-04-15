@@ -5,17 +5,10 @@
 
 #include <vector>
 #include <thread>
+#include <common/asio_predefs.h>
 #include <asio.hpp>
-#ifndef _WIN32_WINNT
-	#ifdef _WIN32
-		#define _WIN32_WINNT 0x0A00
-	#endif
-#endif
-#ifndef ASIO_STANDALONE
-	#define ASIO_STANDALONE
-#endif
 #include <asio/ts/internet.hpp>
-#include "common.h"
+#include <common/common.h>
 #include <tcp/connection.h>
 
 namespace anp

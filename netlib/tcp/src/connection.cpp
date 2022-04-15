@@ -1,4 +1,4 @@
-#include "connection.h"
+#include <tcp/connection.h>
 #include <asio/ts/buffer.hpp>
 #include "Log.h"
 SET_LOG_VERBOSE(true)

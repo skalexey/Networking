@@ -7,17 +7,10 @@
 #include <memory>
 #include <thread>
 #include <string>
-#ifndef _WIN32_WINNT
-	#ifdef _WIN32
-		#define _WIN32_WINNT 0x0A00
-	#endif
-#endif
-#ifndef ASIO_STANDALONE
-	#define ASIO_STANDALONE
-#endif
+#include <common/asio_predefs.h>
 #include <asio.hpp>
 #include <asio/ts/internet.hpp>
-#include "common.h"
+#include <common/common.h>
 #include <tcp/connection.h>
 
 namespace anp
