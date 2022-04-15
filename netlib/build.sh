@@ -3,8 +3,12 @@
 config="Debug"
 logArg="-DLOG_ON=ON"
 build="Build-cmake"
+asioPath=' -DASIO_PATH="C:/lib/asio-1.22.1/include"'
 
-mkdir $build
+[ ! -d "$build" ] && mkdir $build
 cd $build
-cmake .. $logArg
+echo $build
+
+cmake ..$logArg$asioPath
+
 cmake --build . --config=$config
