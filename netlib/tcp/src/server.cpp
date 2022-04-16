@@ -76,6 +76,11 @@ namespace anp
 
 		bool server::start(int port)
 		{
+			if (is_active())
+			{
+				LOCAL_WARNING("Trying to call start while already started");
+				return false;
+			}
 			LOCAL_VERBOSE("Starting on port " << port << " ...");
 			m_ctx = std::make_unique<asio::io_context>();
 			m_acceptor = std::make_unique< asio::ip::tcp::acceptor>(
