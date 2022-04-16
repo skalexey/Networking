@@ -31,6 +31,7 @@ int main()
 		std::string msg;
 		while (true)
 		{
+			std::cout << " > ";
 			std::cin >> msg;
 			if (msg == "connect")
 			{
@@ -51,8 +52,13 @@ int main()
 					"Connection: close\r\n\r\n");
 			else if (msg == "exit")
 				break;
-			else
+			else if (msg == "send")
+			{
+				std::cout << "Message: ";
+				std::cin >> msg;
 				c.send(msg);
+				std::cout << "Sent '" << msg << "'\n";
+			}
 		}
 	}
 	catch (...)

@@ -24,6 +24,7 @@ int main()
 		std::string msg;
 		while (true)
 		{
+			std::cout << " > ";
 			std::cin >> msg;
 			if (msg == "start")
 			{
