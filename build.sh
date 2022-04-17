@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Build for OS: $OSTYPE"
+echo " -- Build for OS: $OSTYPE"
 
 buildFolderPrefix="Build"
 generatorArg=" "
@@ -37,7 +37,7 @@ else
 	generatorArg=" "
 fi
 
-echo "ASIO path arg: '$asioPathArg'"
+echo " --- ASIO path arg: '$asioPathArg'"
 
 argIndex=0
 for arg in "$@" 
@@ -46,30 +46,30 @@ do
 	
 	if [[ $argIndex -eq 0 ]]; then
 		rootDirectory=$arg
-	fi
-	
-	if [[ "$arg" == "only-lib" ]]; then
-		echo "--- 'only-lib' option passed. Build only library without tests"
-		onlyLibArg=" only-lib"
-		cmakeTestsArg=" "
-	elif [[ "$arg" == "g++" ]]; then
-		echo "--- 'g++' option passed. Build with g++ compiler"
-		cmakeGppArg= -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gpp
-		gppArg="g++"
-		buildFolderPrefix="Build-g++"
-	elif [[ "$arg" == "no-log" ]]; then
-		echo "--- 'no-log' option passed. Turn off LOG_ON compile definition"
-		logArg=" "
-	elif [[ "$arg" == "release" ]]; then
-		echo "--- 'release' option passed. Set Release build type"
-		buildConfig="Release"
-	fi
-	
+	else
+		if [[ "$arg" == "only-lib" ]]; then
+			echo "--- 'only-lib' option passed. Build only library without tests"
+			onlyLibArg=" only-lib"
+			cmakeTestsArg=" "
+		elif [[ "$arg" == "g++" ]]; then
+			echo "--- 'g++' option passed. Build with g++ compiler"
+			cmakeGppArg= -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gpp
+			gppArg="g++"
+			buildFolderPrefix="Build-g++"
+		elif [[ "$arg" == "no-log" ]]; then
+			echo "--- 'no-log' option passed. Turn off LOG_ON compile definition"
+			logArg=" "
+		elif [[ "$arg" == "release" ]]; then
+			echo "--- 'release' option passed. Set Release build type"
+			buildConfig="Release"
+		fi
+	fi	
 	argIndex=$((argIndex + 1))
 done
 
 enterDirectory=${pwd}
-cd "$rootDirectory"
+
+[ ! -d "$rootDirectory" ] && echo "Non-existent project directory passed '$rootDirectory'" && exit 1 || cd "$rootDirectory"
 
 if [[ "$rootDirectory" != "." ]]; then
 	folderName=$rootDirectory
