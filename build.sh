@@ -13,6 +13,8 @@ asioPathArgMac=" -DASIO_PATH=~/lib/asio-1.22.1/include"
 buildConfig="Debug"
 logArg=" -DLOG_ON=ON"
 build="Build-cmake"
+rootDirectory="."
+folderName=${PWD##*/}
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 	generatorArg=" "
@@ -37,10 +39,15 @@ fi
 
 echo "ASIO path arg: '$asioPathArg'"
 
+argIndex=0
 for arg in "$@" 
 do
-	echo "Passed arg: '$arg'"
-		
+	#echo "arg[$argIndex]: '$arg'"
+	
+	if [[ $argIndex -eq 0 ]]; then
+		rootDirectory=$arg
+	fi
+	
 	if [[ "$arg" == "only-lib" ]]; then
 		echo "--- 'only-lib' option passed. Build only library without tests"
 		onlyLibArg=" only-lib"
@@ -57,17 +64,48 @@ do
 		echo "--- 'release' option passed. Set Release build type"
 		buildConfig="Release"
 	fi
+	
+	argIndex=$((argIndex + 1))
 done
+
+enterDirectory=${pwd}
+cd "$rootDirectory"
+
+if [[ "$rootDirectory" != "." ]]; then
+	folderName=$rootDirectory
+fi
+
+echo "Build folder '$folderName'"
 
 build="${buildFolderPrefix}-cmake"
 
-echo "--- Build directory: '$build' --- "
+echo "--- Output directory: '$build' --- "
 
 [ ! -d "$build" ] && mkdir $build || echo "	already exists"
 cd $build
 
 cmake ..$generatorArg$logArg$asioPathArg
 
+retval=$?
+if [ $retval -ne 0 ]; then
+	echo " --- CMake configure error of folder '$folderName' --- "
+	cd "$enterDirectory"
+	exit
+else
+	echo " --- CMake configuring of folder '$folderName' successfully done ---"
+fi
+
 cmake --build . --config=$buildConfig
 
-echo "Build finished"
+retval=$?
+if [ $retval -ne 0 ]; then
+	echo " --- CMake build error of folder '$folderName' --- "
+	cd "$enterDirectory"
+	exit
+else
+	echo " --- CMake building of folder '$folderName' successfully done ---"
+fi
+
+cd "$enterDirectory"
+
+echo " --- Finished build of '$folderName' ---"
