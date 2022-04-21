@@ -18,6 +18,6 @@ include_directories(".")
 include_directories("common")
 
 file(GLOB SRC CONFIGURE_DEPENDS "tcp/src/*")
-file(GLOB HEADERS "tcp/* common/*")
+file(GLOB HEADERS CONFIGURE_DEPENDS "tcp/*" "common/*")
 
 add_library(netlib ${SRC} ${HEADERS})
