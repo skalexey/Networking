@@ -7,9 +7,9 @@ generatorArg=" "
 onlyLibArg=" "
 cmakeTestsArg=" "
 cmakeGppArg=" "
-asioPathArg=" "
-asioPathArgWin=" -DASIO_PATH=C:/lib/asio-1.22.1/include"
-asioPathArgMac=" -DASIO_PATH=~/lib/asio-1.22.1/include"
+extraArg=" "
+extraArgWin=" -DASIO_PATH=C:/lib/asio-1.22.1/include"
+extraArgMac=" -DASIO_PATH=~/lib/asio-1.22.1/include"
 buildConfig="Debug"
 logArg=" -DLOG_ON=ON"
 build="Build-cmake"
@@ -21,23 +21,23 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 elif [[ "$OSTYPE" == "darwin"* ]]; then
 	# Mac OSX
 	generatorArg=" -GXcode"
-	asioPathArg=$asioPathArgMac
+	extraArg=$extraArgMac
 elif [[ "$OSTYPE" == "cygwin" ]]; then
 	generatorArg=" "
-	asioPathArg=$asioPathArgWin
+	extraArg=$extraArgWin
 elif [[ "$OSTYPE" == "msys" ]]; then
 	generatorArg=" "
-	asioPathArg=$asioPathArgWin
+	extraArg=$extraArgWin
 elif [[ "$OSTYPE" == "win32" ]]; then
 	generatorArg=" "
-	asioPathArg=$asioPathArgWin
+	extraArg=$extraArgWin
 elif [[ "$OSTYPE" == "freebsd"* ]]; then
 	generatorArg=" "
 else
 	generatorArg=" "
 fi
 
-echo " --- ASIO path arg: '$asioPathArg'"
+[ ! -z "$extraArg" ] && echo " --- Extra arguments: '$extraArg'"
 
 argIndex=0
 for arg in "$@" 
@@ -84,7 +84,7 @@ echo "--- Output directory: '$build' --- "
 [ ! -d "$build" ] && mkdir $build || echo "	already exists"
 cd $build
 
-cmake ..$generatorArg$logArg$asioPathArg
+cmake ..$generatorArg$logArg$extraArg
 
 retval=$?
 if [ $retval -ne 0 ]; then

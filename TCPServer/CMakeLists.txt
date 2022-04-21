@@ -13,12 +13,12 @@ endif ()
 
 include_directories("${ASIO_PATH}")
 
-set(NETWORKING_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
-set(NETLIB_DIR "${NETWORKING_DIR}/netlib/")
+set(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
+set(NETLIB_DIR "${ROOT_DIR}/netlib/")
 
 include_directories("${NETLIB_DIR}")
-include_directories("${NETWORKING_DIR}")
-include_directories("${NETWORKING_DIR}/include")
+include_directories("${ROOT_DIR}")
+include_directories("${ROOT_DIR}/include")
 
 message("TCPServer NETLIB_DIR: '${NETLIB_DIR}'")
 
