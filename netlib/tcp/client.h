@@ -32,7 +32,11 @@ namespace anp
 
 		private:
 			std::unique_ptr<asio::io_context> m_ctx;
+		#ifdef __cpp_lib_jthread
 			std::jthread m_thr_ctx;
+		#else
+			std::thread m_thr_ctx;
+		#endif
 			std::unique_ptr<asio::io_context::work> m_idle_work;
 			std::unique_ptr<anp::tcp::connection> m_connection;
 			on_client_data_cb m_on_receive;

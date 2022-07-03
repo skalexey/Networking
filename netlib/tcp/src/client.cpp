@@ -38,7 +38,11 @@ namespace anp
 			asio::error_code ec;
 			m_ctx = std::make_unique<asio::io_context>();
 			m_idle_work = std::make_unique<asio::io_context::work>(*m_ctx);
+#ifdef __cpp_lib_jthread
 			m_thr_ctx = std::jthread([&] {
+#else
+			m_thr_ctx = std::thread([&] {
+#endif
 				try
 				{
 					m_ctx->run();
