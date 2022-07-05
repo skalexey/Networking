@@ -11,6 +11,10 @@ if (LOG_ON)
 	add_compile_definitions("LOG_ON")
 endif ()
 
+if ("${ASIO_PATH}" STREQUAL "")
+	set (ASIO_PATH $ENV{netlib_asio_path})
+endif()
+
 message("Asio path: '${ASIO_PATH}'")
 
 set(NETLIB_INCLUDES 

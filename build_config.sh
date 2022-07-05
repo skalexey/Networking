@@ -1,8 +1,10 @@
 #!/bin/bash
 
+source external_config.sh
+
 buildFolderPrefix="Build"
 extraArg=" -DDEPS=${depsLocation}"
-extraArgWin="$extraArg -DASIO_PATH=C:/lib/asio-1.22.1/include"
-extraArgMac="$extraArg -DASIO_PATH=~/lib/asio-1.22.1/include"
+extraArgWin="$extraArg"
+extraArgMac="$extraArg"
 buildConfig="Debug"
 logArg=" -DLOG_ON=ON"

@@ -11,14 +11,13 @@ if (LOG_ON)
 	add_compile_definitions("LOG_ON")
 endif ()
 
-include_directories("${ASIO_PATH}")
-
 set(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
-set(NETLIB_DIR "${ROOT_DIR}/netlib/")
-
-include_directories("${NETLIB_DIR}")
-include_directories("${ROOT_DIR}")
-include_directories("${ROOT_DIR}/include")
+set(NETLIB_DIR "${ROOT_DIR}/netlib")
+include_directories(
+	"${NETLIB_INCLUDES}"
+	"${ROOT_DIR}"
+	"${ROOT_DIR}/include"
+)
 
 message("TCPServer NETLIB_DIR: '${NETLIB_DIR}'")
 
