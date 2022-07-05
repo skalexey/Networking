@@ -13,9 +13,15 @@ endif ()
 
 message("Asio path: '${ASIO_PATH}'")
 
-include_directories("${ASIO_PATH}")
-include_directories(".")
-include_directories("common")
+set(NETLIB_INCLUDES 
+	${ASIO_PATH}
+	${PROJECT_SOURCE_DIR}
+	${PROJECT_SOURCE_DIR}/common
+)
+
+set(NETLIB_INCLUDES ${NETLIB_INCLUDES} PARENT_SCOPE)
+
+include_directories("${NETLIB_INCLUDES}")
 
 file(GLOB SRC CONFIGURE_DEPENDS "tcp/src/*")
 file(GLOB HEADERS CONFIGURE_DEPENDS "tcp/*" "common/*")
