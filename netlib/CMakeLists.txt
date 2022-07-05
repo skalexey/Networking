@@ -31,3 +31,9 @@ file(GLOB SRC CONFIGURE_DEPENDS "tcp/src/*")
 file(GLOB HEADERS CONFIGURE_DEPENDS "tcp/*" "common/*")
 
 add_library(netlib ${SRC} ${HEADERS})
+
+add_custom_command(
+    TARGET netlib PRE_BUILD
+    COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/../external_config.sh ${CMAKE_BUILD_TYPE} "${CMAKE_CURRENT_SOURCE_DIR}/.."
+    VERBATIM
+)
