@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source external_config.sh
+
 buildFolderPrefix="Build"
 extraArg=" -DDEPS=${depsLocation}"
 extraArgWin="$extraArg"
