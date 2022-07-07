@@ -13,11 +13,6 @@ endif ()
 
 set(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
 set(NETLIB_DIR "${ROOT_DIR}/netlib")
-include_directories(
-	"${NETLIB_INCLUDES}"
-	"${ROOT_DIR}"
-	"${ROOT_DIR}/include"
-)
 
 message("TCPClient NETLIB_DIR: '${NETLIB_DIR}'")
 
@@ -31,6 +26,11 @@ else()
 	add_subdirectory("${NETLIB_DIR}" "${NETLIB_DIR}/${NETLIB_BUILD_DIR_NAME}")
 endif()
 
+include_directories(
+	"${NETLIB_INCLUDES}"
+	"${ROOT_DIR}"
+	"${ROOT_DIR}/include"
+)
 
 add_executable (TCPClient "TCPClient.cpp" "TCPClient.h")
 
