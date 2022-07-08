@@ -59,6 +59,7 @@ namespace anp
 				asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(host, std::to_string(port));
 				m_connection = std::make_unique<anp::tcp::connection>(*m_ctx);
 				m_connection->set_on_receive(m_on_receive);
+				m_connection->set_on_connect(m_on_connect);
 				LOCAL_VERBOSE("	Connect the socket");
 				m_connection->connect(endpoints, [&](const std::error_code& e) {
 					LOCAL_VERBOSE("Error during connection");
@@ -116,9 +117,18 @@ namespace anp
 			m_connection->send(msg);
 		}
 
-		void client::set_on_receive(const on_client_data_cb& cb)
+		void client::set_on_receive(const data_cb& cb)
 		{
 			m_on_receive = cb;
+			if (m_connection)
+				m_connection->set_on_receive(m_on_receive);
+		}
+
+		void client::set_on_connect(const error_cb& cb)
+		{
+			m_on_connect = cb;
+			if (m_connection)
+				m_connection->set_on_connect(m_on_connect);
 		}
 	}
 }

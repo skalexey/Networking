@@ -21,7 +21,7 @@ namespace anp
 		{
 		}
 
-		void server::set_on_receive(const on_client_data_cb& cb)
+		void server::set_on_receive(const data_cb& cb)
 		{
 			m_on_receive = cb;
 		}

@@ -28,7 +28,8 @@ namespace anp
 			void disconnect();
 			inline bool is_connected() { return !!m_connection; }
 			void send(const std::string& msg);
-			void set_on_receive(const on_client_data_cb& cb);
+			void set_on_receive(const data_cb& cb);
+			void set_on_connect(const error_cb& cb);
 
 		private:
 			std::unique_ptr<asio::io_context> m_ctx;
@@ -39,7 +40,8 @@ namespace anp
 		#endif
 			std::unique_ptr<asio::io_context::work> m_idle_work;
 			std::unique_ptr<anp::tcp::connection> m_connection;
-			on_client_data_cb m_on_receive;
+			data_cb m_on_receive;
+			error_cb m_on_connect;
 		};
 	}
 }

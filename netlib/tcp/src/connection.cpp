@@ -16,6 +16,11 @@ namespace anp
 	{
 		void connection::ReadAsync()
 		{
+			if (m_wait_read)
+				return;
+			
+			m_wait_read = true;
+
 			if (!is_connected())
 			{
 				LOCAL_WARNING("Read called while not connected");
@@ -24,6 +29,7 @@ namespace anp
 
 			m_soc.async_read_some(asio::buffer(buf.data(), buf.size())
 				, [&](std::error_code ec, std::size_t length) {
+					m_wait_read = false;
 					LOCAL_VERBOSE("async_read_some func called");
 					if (!ec)
 					{
@@ -74,8 +80,13 @@ namespace anp
 					else
 					{
 						LOCAL_VERBOSE("Failed to connect: " << ec.message());
-						return;
 					}
+
+					if (m_on_connect)
+						m_on_connect(ec);
+
+					if (ec)
+						return;
 
 					if (m_soc.is_open())
 					{
@@ -116,9 +127,14 @@ namespace anp
 				});
 		}
 
-		void anp::tcp::connection::set_on_receive(const on_client_data_cb& cb)
+		void anp::tcp::connection::set_on_receive(const data_cb& cb)
 		{
 			m_on_receive = cb;
+		}
+
+		void anp::tcp::connection::set_on_connect(const error_cb& cb)
+		{
+			m_on_connect = cb;
 		}
 	}
 }
