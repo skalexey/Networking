@@ -7,17 +7,12 @@
 #include <chrono>
 #include <asio/ts/buffer.hpp>
 #include "tcp/client.h"
-#include "Log.h"
+#include <utils/Log.h>
 SET_LOG_VERBOSE(true)
+SET_LOG_DEBUG(true)
 LOG_TITLE("tcp_client")
-LOG_STREAM([]() -> auto& { return std::cout; })
 
 using namespace std::chrono_literals;
-
-namespace
-{
-	std::thread::id ctx_thread_id;
-}
 
 namespace anp
 {
