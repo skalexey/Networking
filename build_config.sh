@@ -1,5 +1,6 @@
 #!/bin/bash
 
+source netlib/external_config.sh
 source external_config.sh
 
 buildFolderPrefix="Build"

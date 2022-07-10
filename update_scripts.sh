@@ -13,6 +13,7 @@ function update_scripts()
 
 	cp "$scripts_dir/include/log.sh" "$THIS_DIR"
 	cp "$scripts_dir/include/os.sh" "$THIS_DIR"
+	cp "$scripts_dir/include/os.sh" "$THIS_DIR/netlib/"
 	cp "$scripts_dir/include/input.sh" "$THIS_DIR"
 	cp "$scripts_dir/include/file_utils.sh" "$THIS_DIR"
 
