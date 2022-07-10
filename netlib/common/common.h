@@ -4,6 +4,7 @@
 #include <functional>
 #include <vector>
 #include <system_error>
+#include <asio.hpp>
 
 namespace anp
 {

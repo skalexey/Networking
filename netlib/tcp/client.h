@@ -42,6 +42,7 @@ namespace anp
 			std::unique_ptr<anp::tcp::connection> m_connection;
 			data_cb m_on_receive;
 			error_cb m_on_connect;
+			std::thread::id m_ctx_thread_id;
 		};
 	}
 }

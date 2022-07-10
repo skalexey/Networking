@@ -3,14 +3,13 @@
 
 #include <asio/ts/buffer.hpp>
 #include "tcp/server.h"
-#include "Log.h"
+#include <utils/Log.h>
 SET_LOG_VERBOSE(true)
 LOG_TITLE("tcp_server")
-LOG_STREAM([]() -> auto& { return std::cout; })
 
 namespace
 {
-	std::thread::id ctx_thread_id;
+	std::thread::id m_ctx_thread_id;
 }
 
 namespace anp
@@ -46,9 +45,9 @@ namespace anp
 						// Give the user server a chance to deny connection
 						if (OnClientConnect(c))
 						{
-							m_connecions.push_back(std::move(c));
-							m_connecions.back()->ReadAsync();
-							LOCAL_VERBOSE("[" << m_connecions.back()->get_id() << "] Connection Approved");
+							m_connections.emplace(c->get_id(), c);
+							c->ReadAsync();
+							LOCAL_VERBOSE("[" << c->get_id() << "] Connection Approved");
 						}
 						else
 						{
@@ -100,7 +99,7 @@ namespace anp
 			{
 				WaitClientConnection();
 				m_thr_ctx = std::thread([this]() { m_ctx->run(); });
-				ctx_thread_id = m_thr_ctx.get_id();
+				m_ctx_thread_id = m_thr_ctx.get_id();
 
 				LOCAL_VERBOSE("Started");
 			}
@@ -121,11 +120,11 @@ namespace anp
 			}
 
 			auto doClose = [=] {
-				for (auto& c : m_connecions)
+				for (auto&& [id, c] : m_connections)
 					c->close();
-				m_connecions.clear();
+				m_connections.clear();
 			};
-			if (std::this_thread::get_id() != ctx_thread_id)
+			if (std::this_thread::get_id() != m_ctx_thread_id)
 				asio::post(*m_ctx, [=] {
 					doClose();
 				});
@@ -139,6 +138,24 @@ namespace anp
 			m_acceptor.reset();
 			m_ctx.reset();
 			LOCAL_VERBOSE("Stopped");
+		}
+
+		bool server::send(const std::string& msg, int conn_id)
+		{
+			if (conn_id < 0)
+			{
+				for (auto&& [_, c] : m_connections)
+					c->send(msg);
+				return !m_connections.empty();
+			}
+			else
+			{
+				bool ret = false;
+				auto it = m_connections.find(conn_id);
+				if (ret = (it != m_connections.end()))
+					it->second->send(msg);
+				return ret;
+			}
 		}
 	}
 }

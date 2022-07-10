@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <vector>
+#include <map>
 #include <thread>
 #include <common/asio_predefs.h>
 #include <asio.hpp>
@@ -23,6 +23,7 @@ namespace anp
 			bool start(int port);
 			void stop();
 			void set_on_receive(const data_cb& cb);
+			bool send(const std::string& msg, int conn_id = -1);
 
 		protected:
 			void WaitClientConnection();
@@ -33,7 +34,7 @@ namespace anp
 			std::unique_ptr<asio::ip::tcp::acceptor> m_acceptor;
 			std::thread m_thr_ctx;
 			data_cb m_on_receive;
-			std::vector<connection_ptr> m_connecions;
+			std::unordered_map<int, connection_ptr> m_connections;
 			int m_conn_id = 0;
 		};
 	}

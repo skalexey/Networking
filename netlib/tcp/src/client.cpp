@@ -47,7 +47,7 @@ namespace anp
 					std::cout << "Exception in context thread cathced\n";
 				}
 			});
-			ctx_thread_id = m_thr_ctx.get_id();
+			m_ctx_thread_id = m_thr_ctx.get_id();
 			try
 			{
 				asio::ip::tcp::resolver resolver(*m_ctx);
@@ -76,7 +76,7 @@ namespace anp
 			{
 				if (m_connection->is_connected())
 				{
-					if (std::this_thread::get_id() != ctx_thread_id)
+					if (std::this_thread::get_id() != m_ctx_thread_id)
 						asio::post(*m_ctx, [&] {
 							m_connection->close();
 						});
@@ -87,14 +87,24 @@ namespace anp
 				LOCAL_VERBOSE("	Stop the context");
 				m_ctx->stop();
 				LOCAL_VERBOSE("		Context stopped");
-				if (m_thr_ctx.joinable())
-					m_thr_ctx.join();
+				try
+				{
+					if (std::this_thread::get_id() != m_ctx_thread_id)
+						if (m_thr_ctx.joinable())
+							m_thr_ctx.join();
+				}
+				catch (std::system_error& e)
+				{
+					LOG_ERROR("Error while disconnecting: " << e.what());
+				}
 				LOCAL_VERBOSE("		Thread joined");
 				m_idle_work.reset();
 				m_connection.reset();
-				m_ctx.reset();
-				LOCAL_VERBOSE("	Resources destroyed")
-					LOCAL_VERBOSE("Disconnected");
+				// TODO: check if everything is ok in the ELSE case of this IF
+				if (std::this_thread::get_id() != m_ctx_thread_id)
+					m_ctx.reset();
+				LOCAL_VERBOSE("	Resources destroyed");
+				LOCAL_VERBOSE("Disconnected");
 			}
 			else
 			{
@@ -104,6 +114,8 @@ namespace anp
 
 		void client::send(const std::string& msg)
 		{
+			LOCAL_DEBUG("Send data: \n'" << msg << "'\n\n");
+
 			if (!m_connection)
 			{
 				LOCAL_WARNING("send called while disconnected");
