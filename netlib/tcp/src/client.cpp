@@ -22,6 +22,10 @@ namespace anp
 		{
 			if (is_connected())
 				m_connection->close();
+			assert(std::this_thread::get_id() != m_ctx_thread_id);
+			if (m_thr_ctx.joinable())
+				m_thr_ctx.join();
+			m_ctx.reset();
 		}
 
 		bool client::connect(const std::string& host, int port)
