@@ -1,4 +1,4 @@
-﻿// client.cpp : Defines the entry point for the application.
+// client.cpp : Defines the entry point for the application.
 //
 
 #include <cstdlib>

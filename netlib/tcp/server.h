@@ -1,9 +1,9 @@
-﻿// server.h : Include file for standard system include files,
+// server.h : Include file for standard system include files,
 // or project specific include files.
 
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <thread>
 #include <common/asio_predefs.h>
 #include <asio.hpp>
