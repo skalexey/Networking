@@ -8,13 +8,13 @@
 
 namespace anp
 {
-	typedef std::function<void(
+	using data_cb = std::function<bool(
 		const std::vector<char>&	// Buffer
 		, std::size_t				// Size
 		, int						// Id
-	)> data_cb;
+	)>;
 
-	typedef std::function<void()> void_cb;
-	typedef std::function<void(const std::error_code&)> error_cb;
-	typedef std::function<void(asio::error_code&) > asio_operation_cb;
+	using void_cb = std::function<void()>;
+	using error_cb = std::function<void(const std::error_code&)>;
+	using asio_operation_cb = std::function<void(asio::error_code&) >;
 }
