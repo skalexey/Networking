@@ -3,6 +3,8 @@
 #include <utils/Log.h>
 SET_LOG_VERBOSE(true)
 LOG_TITLE("tcp_connection")
+LOG_PREFIX("[connection]: ");
+LOG_POSTFIX("\n");
 
 namespace
 {
@@ -28,6 +30,11 @@ namespace anp
 
 			m_soc.async_read_some(asio::buffer(buf.data(), buf.size())
 				, [&](std::error_code ec, std::size_t length) {
+					if (!is_connected())
+					{
+						LOG_DEBUG("Receiving when already disconnected...");
+						return;
+					}
 					m_wait_read = false;
 					LOCAL_VERBOSE("async_read_some func called");
 					if (!ec)
@@ -36,17 +43,27 @@ namespace anp
 						//for (int i = 0; i < length; i++)
 						//	LOCAL_VERBOSE(buf[i]);
 						if (m_on_receive)
-							m_on_receive(buf, length, m_id);
+							if (!m_on_receive(buf, length, m_id))
+							{
+								if (is_connected())
+									close();
+								return;
+							}
 						ReadAsync();
 					}
 					else
 					{
 						LOCAL_VERBOSE("\terror: '" << ec.message() << "'");
 						if (is_connected())
-							m_soc.close();
+							close();
 					}
 				}
 			);
+		}
+
+		connection::~connection()
+		{
+			LOG_DEBUG("connection::~connection");
 		}
 
 		connection::connection(asio::io_context& ctx)
@@ -101,12 +118,23 @@ namespace anp
 
 		void anp::tcp::connection::close()
 		{
-			if (!is_connected())
+			LOG_DEBUG("connection::close()");
+			try
 			{
-				LOCAL_WARNING("Call close while already disconnected");
-				return;
+				if (!is_connected())
+				{
+					LOCAL_WARNING("Call close while already disconnected");
+					return;
+				}
+				m_soc.close();
+				if (m_on_close)
+					m_on_close();
 			}
-			m_soc.close();
+			catch (std::system_error& e)
+			{
+				LOG_ERROR("Exception on close: " << e.what());
+				LOG_ERROR("What a hell is going on...");
+			}
 		}
 
 		void connection::send(const std::string& msg)
@@ -134,6 +162,11 @@ namespace anp
 		void anp::tcp::connection::set_on_connect(const error_cb& cb)
 		{
 			m_on_connect = cb;
+		}
+		
+		void connection::set_on_close(const void_cb& cb)
+		{
+			m_on_close = cb;
 		}
 	}
 }

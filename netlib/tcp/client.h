@@ -30,6 +30,10 @@ namespace anp
 			void send(const std::string& msg);
 			void set_on_receive(const data_cb& cb);
 			void set_on_connect(const error_cb& cb);
+			void set_on_close(const void_cb& cb);
+
+		private:
+			void on_connection_close();
 
 		private:
 			std::unique_ptr<asio::io_context> m_ctx;
@@ -42,6 +46,7 @@ namespace anp
 			std::unique_ptr<anp::tcp::connection> m_connection;
 			data_cb m_on_receive;
 			error_cb m_on_connect;
+			void_cb m_on_close;
 			std::thread::id m_ctx_thread_id;
 		};
 	}
