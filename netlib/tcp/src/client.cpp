@@ -49,6 +49,10 @@ namespace anp
 				{
 					m_ctx->run();
 				}
+				catch (std::exception& ex)
+				{
+					std::cout << "Exception in context thread cathced: '" << ex.what() << "'\n";
+				}
 				catch (...)
 				{
 					std::cout << "Exception in context thread cathced\n";
