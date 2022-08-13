@@ -21,14 +21,14 @@ namespace anp
 			~connection();
 			connection(asio::io_context& ctx);
 			connection(asio::io_context& ctx, asio::ip::tcp::socket socket, int id);
-			inline bool is_connected() const { return m_soc.is_open(); };
+			bool is_connected() const { return m_soc.is_open(); };
 			void connect(const asio::ip::tcp::resolver::results_type& ep, const asio_operation_cb& on_result = nullptr);
 			void close();
 			void send(const std::string& msg);
 			void set_on_receive(const data_cb& cb);
 			void set_on_connect(const error_cb& cb);
 			void set_on_close(const void_cb& cb);
-			inline int get_id() { return m_id; }
+			int get_id() { return m_id; }
 
 		private:
 			void ReadAsync();
