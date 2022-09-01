@@ -10,7 +10,7 @@ int main()
 	std::cout << "TCPServer" << std::endl;
 
 	anp::tcp::server s;
-	s.set_on_receive([&](auto& data, auto size, auto id) {
+	s.set_on_receive([](auto& data, auto size, auto id) {
 		std::cout << "Received from " << id << ":" << std::endl;
 		for (int i = 0; i < size; i++)
 			std::cout << data[i];

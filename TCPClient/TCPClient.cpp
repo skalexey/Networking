@@ -13,7 +13,7 @@ int main()
 	anp::tcp::client c;
 
 	// Set what to do on data received
-	c.set_on_receive([&](auto& data, auto size, auto id) {
+	c.set_on_receive([](auto& data, auto size, auto id) {
 		std::cout << "Data received: " << std::endl;
 		for (int i = 0; i < size; i++)
 			std::cout << data[i];
