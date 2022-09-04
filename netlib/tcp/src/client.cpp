@@ -68,7 +68,7 @@ namespace anp
 				m_connection->set_on_connect(m_on_connect);
 				m_connection->set_on_close(std::bind(&client::on_connection_close, this));
 				LOCAL_VERBOSE("	Connect the socket");
-				m_connection->connect(endpoints, [&](const std::error_code& e) {
+				m_connection->connect(endpoints, [this](const std::error_code& e) {
 					LOCAL_VERBOSE("Error during connection");
 					disconnect();
 				});

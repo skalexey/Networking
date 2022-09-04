@@ -82,7 +82,7 @@ namespace anp
 		void anp::tcp::connection::connect(const asio::ip::tcp::resolver::results_type& ep, const asio_operation_cb& on_result)
 		{
 			asio::async_connect(m_soc, ep,
-				[=](std::error_code ec, asio::ip::tcp::endpoint endpoint)
+				[=, this](std::error_code ec, asio::ip::tcp::endpoint endpoint)
 				{
 					auto ret = [&] {
 						if (on_result)
