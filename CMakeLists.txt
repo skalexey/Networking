@@ -11,11 +11,10 @@ if(MSVC)
 		"/Zc:__cplusplus"
 		"/std:c++latest"
 	)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 else()
 	set(CMAKE_CXX_STANDARD 20)
 endif()
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 
 # Include sub-projects.
 option(NETLIB_EXTERNAL "Don't add netlib subdirectory inside nested projects" ON)
