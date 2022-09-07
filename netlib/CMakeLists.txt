@@ -28,15 +28,6 @@ endif()
 # 	message("netlib: LOG_LEVEL_VERBOSE is OFF")
 # endif()
 
-if ("${LIBS}" STREQUAL "")
-	set (LIBS $ENV{netlib_libs})
-endif()
-if ("${LIBS}" STREQUAL "")
-	set (LIBS $ENV{build_libs})
-endif()
-if ("${ASIO_PATH}" STREQUAL "")
-	set (ASIO_PATH ${LIBS}/asio-1.22.1/include)
-endif()
 message("netlib: Asio path: '${ASIO_PATH}'")
 
 # set deps variables
@@ -55,6 +46,8 @@ else()
 	message("netlib: DEPS: ${DEPS}")
 endif()
 set(DEPS ${DEPS} PARENT_SCOPE)
+
+set(ASIO_PATH ${DEPS}/asio-1.22.1/include)
 
 set(UTILS_DIR "${DEPS}/Utils")
 
