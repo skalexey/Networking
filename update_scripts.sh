@@ -16,6 +16,7 @@ function update_scripts()
 	cp "$scripts_dir/include/os.sh" "$THIS_DIR/netlib/"
 	cp "$scripts_dir/include/input.sh" "$THIS_DIR"
 	cp "$scripts_dir/include/file_utils.sh" "$THIS_DIR"
+	cp "$scripts_dir/include/net_utils.sh" "$THIS_DIR"
 
 	[ $? -ne 0 ] && log_error "Error while delivering files" && return 1
 

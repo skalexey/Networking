@@ -67,10 +67,10 @@ build()
 			elif [[ "$arg" == "release" ]]; then
 				log "'release' option passed. Set Release build type" " --"
 				local buildConfig="Release"
-				local custom_config=true
 				if [ -f "build_config_release.sh" ]; then
 					log "Load build_config_release.sh"
 					source build_config_release.sh
+					local custom_config=true
 				else
 					log "build_config_release.sh was not found. You can create it and override settings for release build"
 				fi
@@ -80,6 +80,9 @@ build()
 			elif [[ "$arg" == "reconfigure" ]] || [[ "$arg" == "-rc" ]]; then
 				log "'$arg' option passed. Will not build the project. Only make the config and remove CMakeCache.txt" " --"
 				local onlyConfig=true
+				local reconfigure=true
+			elif [[ "$arg" == "reconfigure" ]] || [[ "$arg" == "-rcb" ]]; then
+				log "'$arg' option passed. Will reconfigure and build the project." " --"
 				local reconfigure=true
 			fi
 		fi	
@@ -92,21 +95,20 @@ build()
 	fi
 
 	# check for dependencies
-	local enterDirectory=${pwd}
-
+	local enterDirectory=${PWD}
 	if [ -f "get_dependencies.sh" ]; then
 		source get_dependencies.sh $@
 		local retval=$?
 		if [ $retval -ne 0 ]; then
 			log_error "Dependencies resolution error" " --"
-			exit 1
+			return 1
 		else
 			log_success "Done with dependencies" " --"
 			cd "$enterDirectory"
 		fi
 	fi
 
-	[ ! -d "$rootDirectory" ] && log_error "Non-existent project directory passed '$rootDirectory'" " -" && exit 1
+	[ ! -d "$rootDirectory" ] && log_error "Non-existent project directory passed '$rootDirectory'" " -" && return 5
 
 	if [[ "$rootDirectory" != "." ]]; then
 		local folderName=$rootDirectory
@@ -116,7 +118,7 @@ build()
 
 	log "Output directory: '$build'" " -"
 
-	[ ! -d "$build" ] && mkdir $build || log "	already exists"
+	[ ! -d "$build" ] && mkdir $build || log "	already exists" " --"
 	cd "$build"
 
 	if $reconfigure; then
@@ -132,12 +134,12 @@ build()
 	if [ $retval -ne 0 ]; then
 		log_error "CMake configure error" " -"
 		cd "$enterDirectory"
-		exit
+		return 2
 	else
 		log_success "CMake configuring has been successfully done" " -"
 	fi
 
-	[ "$onlyConfig" == true ] && log "Exit without build" " -" && exit || log "Run cmake --build" " -"
+	[ "$onlyConfig" == true ] && log "Exit without build" " -" && return 4 || log "Run cmake --build" " -"
 
 	log "cmake --build . --config=$buildConfig" "\033[0;36m" "\033[0m"
 	cmake --build . --config=$buildConfig
@@ -146,7 +148,7 @@ build()
 	if [ $retval -ne 0 ]; then
 		log_error "CMake build error" " -"
 		cd "$enterDirectory"
-		exit
+		return 3
 	else
 		log_success "CMake building is successfully done" "-" " ---"
 	fi
