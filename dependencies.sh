@@ -19,7 +19,7 @@ function download_dependency()
 		local retval=$?
 		if [ $retval -ne 0 ]; then
 			log_error "Directory '${deps_path}' creation error" " ---"
-			exit 1
+			return 1
 		else
 			log "Created" " ---"
 		fi
@@ -31,6 +31,12 @@ function download_dependency()
 		local cur_path=$(pwd)
 		cd "$deps_path"
 		download ${@:3}
+		if [ $? -ne 0 ]; then
+			log_error "Dependency '${dep_dir_name}' download error" " ---"
+			return 1
+		else
+			log_success "Completed download of dependency '$dep_dir_name'" " ---"
+		fi
 		cd "${cur_path}"
 	else
 		log "Dependency '$dep_dir_name' is already downloaded" " ---"
