@@ -12,7 +12,7 @@ if(MSVC)
 		"/std:c++latest"
 	)
 else()
-	set(CMAKE_CXX_STANDARD 20)
+	set(CMAKE_CXX_STANDARD 17)
 endif()
 
 # if (LOG_ON)
@@ -27,8 +27,6 @@ endif()
 # else()
 # 	message("netlib: LOG_LEVEL_VERBOSE is OFF")
 # endif()
-
-message("netlib: Asio path: '${ASIO_PATH}'")
 
 # set deps variables
 set(netlib_DEPS "$ENV{netlib_deps}")
@@ -48,6 +46,7 @@ endif()
 set(DEPS ${DEPS} PARENT_SCOPE)
 
 set(ASIO_PATH ${DEPS}/asio-1.22.1/include)
+message("netlib: Asio path: '${ASIO_PATH}'")
 
 set(UTILS_DIR "${DEPS}/Utils")
 
