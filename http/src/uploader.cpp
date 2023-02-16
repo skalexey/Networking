@@ -4,12 +4,10 @@
 #include <format>
 #endif
 #include <fstream>
-#include <tcp/client.h>
 #include <utils/Log.h>
 #include <utils/string_utils.h>
 #include <utils/file_utils.h>
 #include <utils/datetime.h>
-#include <tcp/client.h>
 #include "uploader.h"
 
 LOG_PREFIX("[uploader]: ");
@@ -21,20 +19,21 @@ namespace fs = std::filesystem;
 namespace anp
 {
 	int uploader::upload_file(
-		const std::string& host,
-		int port,
+		const endpoint_t& ep,
 		const fs::path& local_path,
-		const std::string& q
+		const credentials& credentials,
+		const std::string& url_path
 	)
 	{
 		std::string fname = local_path.filename().string();
-		headers_t m_headers;
+		query_t q = credentials.query();
+		q.path = url_path;
 		std::ifstream f(local_path);
 		if (!f.is_open())
 			return notify(erc::file_not_exists);
 		std::string file_data = utils::file::contents(local_path);
-		m_headers.add({ "Content-Type", "multipart/form-data; boundary=dsfjiofadsio"});
-		std::string body = utils::format_str(
+		q.headers.add({ "Content-Type", "multipart/form-data; boundary=dsfjiofadsio"});
+		q.body = utils::format_str(
 			"--dsfjiofadsio\r\n"
 			"Content-Disposition: form-data; name=\"file\"; filename=\"%s\"\r\n"
 			"Content-Type: text/plain\r\n\r\n"
@@ -42,8 +41,9 @@ namespace anp
 			"--dsfjiofadsio--"
 			, fname.c_str(), file_data.c_str()
 		);
-		m_headers.add({ "Content-Length", std::to_string(body.size()) });
-		return query({ host, port }, "POST", q, [=, this](
+		q.headers.add({ "Content-Length", std::to_string(q.body.size()) });
+		q.method = "POST";
+		return query(ep, q, [=, this](
 			const headers_t& headers
 			, const char* data
 			, std::size_t sz
@@ -69,7 +69,7 @@ namespace anp
 				return true;
 			}
 			return false;
-		}, m_headers, body);
+		});
 	}
 
 	void uploader::on_notify(int ec)

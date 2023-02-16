@@ -23,14 +23,12 @@ namespace ch = std::chrono;
 
 namespace anp
 {
-	int authenticator::auth(
-		const std::string& host,
-		int port,
-		const std::string& user,
-		const std::string& token
-	)
+	int authenticator::auth(const endpoint_t& ep, const std::string& path, const credentials& credentials)
 	{
-		return 0;
+		query_t q = credentials.query();
+		q.path = path;
+		q.method = "GET";
+		return query(ep, q);
 	}
 
 	void authenticator::on_notify(int ec)
@@ -39,5 +37,13 @@ namespace anp
 
 	void authenticator::on_reset()
 	{
+	}
+
+	query_t credentials::query() const
+	{
+		query_t q;
+		q.values.add("u", user);
+		q.values.add("t", token);
+		return q;
 	}
 }

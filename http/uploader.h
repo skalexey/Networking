@@ -5,13 +5,14 @@
 #include <memory>
 #include <string>
 #include <filesystem>
-#include "http_client.h"
+#include "authenticator.h"
 
 namespace anp
 {
-	class uploader : public http_client
+	class uploader : public authenticator
 	{
 		using base = http_client;
+		using http_client::endpoint_t;
 
 	public:
 		enum erc : int
@@ -22,10 +23,10 @@ namespace anp
 		};
 
 		int upload_file(
-			const std::string& host,
-			int port,
+			const endpoint_t& ep,
 			const std::filesystem::path& target_path,
-			const std::string& query = "/"
+			const credentials& credentials,
+			const std::string& url_path = ""
 		);
 
 	protected:
