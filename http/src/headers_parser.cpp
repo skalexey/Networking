@@ -58,7 +58,7 @@ namespace anp
 			auto p = s.find("\r\n", m_cursor); // Header end position
 			if (p != std::string::npos)
 			{
-				if (p == 0 && m_last_data.empty())
+				if (p == m_cursor && m_last_data.empty())
 				{
 					// Headers block finished
 					if (auto r = on_headers_received())
@@ -74,11 +74,11 @@ namespace anp
 				{
 					// Header
 					std::string_view h(s.begin() + m_cursor, s.begin() + p);
-					auto colon_p = h.find_first_of(":", m_cursor);
+					auto colon_p = h.find_first_of(":");
 					if (colon_p != std::string::npos)
 					{
 						auto n = h.substr(0, colon_p); // Header name
-						auto v = h.substr(colon_p);
+						auto v = h.substr(colon_p + 2);
 						m_headers.add({ n, v });
 					}
 					else

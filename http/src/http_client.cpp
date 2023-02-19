@@ -96,7 +96,7 @@ namespace anp
 		{
 			LOG_DEBUG("Set on_receive task");
 			m_client->set_on_receive([=](
-				const std::vector<data_t>& data
+				const std::vector<http_data_t>& data
 				, std::size_t sz
 				, int id
 			) -> bool {
@@ -104,7 +104,7 @@ namespace anp
 				std::string_view s(data.begin(), data.begin() + sz);
 				LOG_DEBUG(s);
 
-				const data_t* payload = data.data();
+				const http_data_t* payload = data.data();
 				std::size_t payload_size = sz;
 
 				if (m_headers_parser.error_code() <= headers_parser::in_progress)
@@ -124,11 +124,11 @@ namespace anp
 						switch (m_receive_mode)
 						{
 							case receive_mode::file:
-								m_data_receiver = std::make_unique<utils::data::receiver_file<data_t>>(m_headers_parser.content_length(), m_file_path);
+								m_data_receiver = std::make_unique<utils::data::receiver_file<http_data_t>>(m_headers_parser.content_length(), m_file_path);
 								break;
 
 							case receive_mode::memory_full_payload:
-								m_data_receiver = std::make_unique<utils::data::receiver_memory<data_t>>(m_headers_parser.content_length());
+								m_data_receiver = std::make_unique<utils::data::receiver_memory<http_data_t>>(m_headers_parser.content_length());
 								break;
 						}
 					}
@@ -146,17 +146,19 @@ namespace anp
 						case receive_mode::file:
 							if (m_data_receiver)
 								if (m_data_receiver->receive(payload, payload_size))
-									PROFILE_TIME(return on_receive(
-											m_headers_parser.headers()
-											, m_data_receiver->data()
-											, m_data_receiver->size()
-											, m_headers_parser.status()
-										)
-									);
+									if (m_data_receiver->full())
+										PROFILE_TIME(return on_receive(
+												m_headers_parser.headers()
+												, m_data_receiver->data()
+												, m_data_receiver->size()
+												, m_headers_parser.status()
+											)
+										);
 							break;
 					}
 				}
-					
+
+				notify(erc::no_error);
 				return true;
 			});
 		}
@@ -174,37 +176,7 @@ namespace anp
 			m_client->disconnect();
 	}
 
-	int http_client::query(
-		const endpoint_t& endpoint,
-		const query_t& q,
-		const http_response_cb& on_receive
-	)
-	{
-		return query(endpoint, q.method, q.uri(), on_receive, q.headers, q.body);
-	}
-
-	void http_client::query_async(
-		const endpoint_t& endpoint,
-		const query_t& query,
-		const http_response_cb& on_receive
-	)
-	{
-		query_async(endpoint, query.method, query.uri(), on_receive, query.headers, query.body);
-	}
-
-	int http_client::query(
-		const endpoint_t& endpoint,
-		const std::string& method,
-		const std::string& query,
-		const http_response_cb& on_receive,
-		const headers_t& headers,
-		const std::string& body
-	)
-	{
-		query_async(endpoint, method, query, on_receive, headers, body);
-		wait();
-		return m_error_code;
-	}
+	
 
 	void http_client::query_async(
 		const endpoint_t& endpoint,
@@ -259,7 +231,7 @@ namespace anp
 		return m_error_code;
 	}
 
-	void http_client::set_receive_file(const std::string &file_path)
+	void http_client::set_receive_file(const fs::path &file_path)
 	{
 		m_receive_mode = receive_mode::file;
 		m_file_path = file_path;
@@ -272,6 +244,9 @@ namespace anp
 		m_client = std::make_unique<anp::tcp::client>();
 		m_data_receiver.reset();
 		m_headers_parser.reset();
+		// TODO: clean this too
+		//m_file_path.clear();
+		//receive_mode m_receive_mode = receive_mode::memory_full_payload;
 		on_reset();
 	}
 }

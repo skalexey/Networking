@@ -2,32 +2,29 @@
 
 #pragma once
 
-#include <memory>
-#include <string>
-#include <filesystem>
-#include "authenticator.h"
+#include <http/http_client.h>
+#include <utils/filesystem.h>
+#include "uploader_interface.h"
 
 namespace anp
 {
-	class uploader : public authenticator
+	class uploader : public http_client, public uploader_interface
 	{
 		using base = http_client;
-		using http_client::endpoint_t;
 
 	public:
 		enum erc : int
 		{
-			file_not_exists = http_client::erc::count,
+			file_not_exists = base::erc::count,
 			transfer_error,
 			auth_error
 		};
 
 		int upload_file(
 			const endpoint_t& ep,
-			const std::filesystem::path& target_path,
-			const credentials& credentials,
-			const std::string& url_path = ""
-		);
+			const fs::path& target_path,
+			const query_t& query
+		) override;
 
 	protected:
 		void on_notify(int ec) override;

@@ -14,20 +14,16 @@ LOG_PREFIX("[uploader]: ");
 LOG_POSTFIX("\n");
 SET_LOG_DEBUG(true);
 
-namespace fs = std::filesystem;
-
 namespace anp
 {
 	int uploader::upload_file(
 		const endpoint_t& ep,
 		const fs::path& local_path,
-		const credentials& credentials,
-		const std::string& url_path
+		const query_t& query
 	)
 	{
 		std::string fname = local_path.filename().string();
-		query_t q = credentials.query();
-		q.path = url_path;
+		query_t q = query;
 		std::ifstream f(local_path);
 		if (!f.is_open())
 			return notify(erc::file_not_exists);
@@ -43,7 +39,7 @@ namespace anp
 		);
 		q.headers.add({ "Content-Length", std::to_string(q.body.size()) });
 		q.method = "POST";
-		return query(ep, q, [=, this](
+		return this->query(ep, q, [=, this](
 			const headers_t& headers
 			, const char* data
 			, std::size_t sz
@@ -51,7 +47,7 @@ namespace anp
 			) -> bool
 		{
 			std::string s(data, data + sz);
-			if (s.find("was uploaded successfully") != std::string::npos)
+			if (s.find("uploaded successfully") != std::string::npos)
 			{
 				LOG_DEBUG("Upload has been completed");
 				notify(http_client::erc::no_error);

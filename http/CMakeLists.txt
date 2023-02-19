@@ -75,6 +75,6 @@ file(GLOB SRC CONFIGURE_DEPENDS "src/*")
 file(GLOB HEADERS CONFIGURE_DEPENDS "*.h")
 
 # if (HTTP)
-	add_library(http ${SRC} ${HEADERS})
+	add_library(http ${SRC})
 	target_link_libraries(http PRIVATE netlib)
 # endif()
