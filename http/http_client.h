@@ -19,6 +19,8 @@ namespace anp
 {
 	class http_client : public virtual http_client_interface
 	{
+		using base = http_client_interface;
+
 	public:
 		enum erc : int
 		{
@@ -64,6 +66,16 @@ namespace anp
 			const headers_t& m_headers = headers_t(),
 			const std::string& body = ""
 		) override;
+
+		// MSVC fix.
+		// This function is actually inherited from http_client_interface and should be visible
+		void query_async(
+			const endpoint_t& endpoint,
+			const query_t& query,
+			const http_response_cb& on_receive = http_response_cb()
+		) override {
+			base::query_async(endpoint, query, on_receive);
+		}
 		
 		void wait() override;
 

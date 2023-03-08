@@ -119,7 +119,7 @@ namespace anp
 				return;
 			}
 
-			auto doClose = [=, this] {
+			auto doClose = [this] {
 				for (auto&& [id, c] : m_connections)
 					c->close();
 				m_connections.clear();

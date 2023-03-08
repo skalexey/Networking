@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <memory>
 #include <utils/filesystem.h>
 #include "query.h"
 #include "endpoint.h"
@@ -18,5 +19,14 @@ namespace anp
 			, const fs::path& target_path = {}
 			, const http_response_cb& on_response = {}
 		) = 0;
+		
+		virtual void download_file_async(
+			const endpoint_t& ep
+			, const result_cb& on_result = {}
+			, const query_t& query = {}
+			, const fs::path& target_path = {}
+			, const http_response_cb& on_response = {}
+		) = 0;
 	};
+	using downloader_interface_ptr = std::shared_ptr<downloader_interface>;
 }

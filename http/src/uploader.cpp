@@ -39,7 +39,7 @@ namespace anp
 		);
 		q.headers.add({ "Content-Length", std::to_string(q.body.size()) });
 		q.method = "POST";
-		return this->query(ep, q, [=, this](
+		return this->query(ep, q, [this](
 			const headers_t& headers
 			, const char* data
 			, std::size_t sz

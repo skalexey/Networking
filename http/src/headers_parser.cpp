@@ -73,7 +73,7 @@ namespace anp
 				else
 				{
 					// Header
-					std::string_view h(s.begin() + m_cursor, s.begin() + p);
+					std::string_view h(&*(s.begin() + m_cursor), p - m_cursor);
 					auto colon_p = h.find_first_of(":");
 					if (colon_p != std::string::npos)
 					{

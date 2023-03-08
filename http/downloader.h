@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <memory>
 #include <utils/filesystem.h>
 #include "http_client.h"
 #include "downloader_interface.h"
@@ -28,5 +29,14 @@ namespace anp
 			, const fs::path& target_path = {}
 			, const http_response_cb& on_response = {}
 		) override;
+		
+		void download_file_async(
+			const endpoint_t& ep
+			, const result_cb& on_result = {}
+			, const query_t& query = {}
+			, const fs::path& target_path = {}
+			, const http_response_cb& on_response = {}
+		) override;
 	};
+	using downloader_ptr = std::shared_ptr<downloader>;
 }

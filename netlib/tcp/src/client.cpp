@@ -20,6 +20,35 @@ namespace anp
 {
 	namespace tcp
 	{
+		struct error_category_user : public std::error_category
+		{
+			const char* name() const noexcept override {
+				return "user";
+			}
+			std::string message(int _Errval) const override {
+				return "This is a error category for every non-standard error represented as std::error_code";
+			}
+		};
+
+		static error_category_user error_category_user_instance;
+
+		enum erc : int {
+			no_error = 0
+			, undefined_exception
+		};
+
+		struct error_code_exception : public std::error_code
+		{
+			error_code_exception(const std::exception& ex) 
+				: std::error_code(erc::undefined_exception, error_category_user_instance)
+				, m_ex(ex) {}
+			const std::exception& get_exception() const { return m_ex; }
+			operator bool() const { return true; }
+			
+		private:
+			std::exception m_ex;
+		};
+
 		client::~client()
 		{
 			LOG_DEBUG("client::~client");
@@ -76,6 +105,7 @@ namespace anp
 			catch (std::exception& e)
 			{
 				LOCAL_WARNING("Can't make endpoint from the given address. Error msg: '" << e.what() << "'");
+				m_on_connect(error_code_exception(e));
 				return false;
 			}
 			return true;
@@ -182,7 +212,7 @@ namespace anp
 				m_connection->set_on_connect(m_on_connect);
 		}
 
-		void client::set_on_close(const void_cb& cb)
+		void client::set_on_close(const utils::void_cb& cb)
 		{
 			m_on_close = cb;
 		}

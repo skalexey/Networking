@@ -27,7 +27,7 @@ namespace anp
 			void send(const std::string& msg);
 			void set_on_receive(const data_cb& cb);
 			void set_on_connect(const error_cb& cb);
-			void set_on_close(const void_cb& cb);
+			void set_on_close(const utils::void_cb& cb);
 			int get_id() { return m_id; }
 
 		private:
@@ -38,7 +38,7 @@ namespace anp
 			asio::ip::tcp::socket m_soc;
 			data_cb m_on_receive;
 			error_cb m_on_connect;
-			void_cb m_on_close;
+			utils::void_cb m_on_close;
 			int m_id = -1;
 			std::atomic<bool> m_wait_read = false;
 		};

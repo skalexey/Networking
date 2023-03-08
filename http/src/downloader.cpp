@@ -32,7 +32,7 @@ namespace anp
 		query_t query = q;
 		if (query.method.empty())
 			query.method = "GET";
-		return this->query(ep, query, [=, this](
+		return this->query(ep, query, [this, on_response](
 			const headers_t& headers
 			, const char* data
 			, std::size_t sz
@@ -43,6 +43,36 @@ namespace anp
 					if (!on_response(headers, data, sz, status))
 						return false;
 				return true;
+			}
+		);
+	}
+
+	void downloader::download_file_async(
+		const endpoint_t& ep
+		, const result_cb& on_result
+		, const query_t& q
+		, const fs::path& target_path
+		, const http_response_cb& on_response
+	)
+	{
+		set_receive_file(target_path.string() + ".dwl");
+		query_t query = q;
+		if (query.method.empty())
+			query.method = "GET";
+		query_async(ep, query, [this, on_result, on_response](
+			const headers_t& headers
+			, const char* data
+			, std::size_t sz
+			, int status
+			) -> bool
+			{
+				bool result = true;
+				if (on_response)
+					if (!on_response(headers, data, sz, status))
+						result = false;
+				if (on_result)
+					on_result(errcode());
+				return result;
 			}
 		);
 	}

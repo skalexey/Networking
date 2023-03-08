@@ -78,7 +78,7 @@ namespace anp
 			notify(m_error_code);
 		});
 
-		m_client->set_on_connect([=, this](const std::error_code& ec) {
+		m_client->set_on_connect([=, self = this](const std::error_code& ec) {
 			if (!ec)
 			{
 				LOG_DEBUG("Send...");
@@ -86,8 +86,8 @@ namespace anp
 			}
 			else
 			{
-				LOG_ERROR("Error during connection.");
-				notify(connection_process_error);
+				LOG_ERROR("Error during connection: " << ec);
+				self->notify(connection_process_error);
 			}
 		});
 
@@ -101,7 +101,8 @@ namespace anp
 				, int id
 			) -> bool {
 				LOG_DEBUG("\nReceived packet " << id << " with " << sz << " bytes:");
-				std::string_view s(data.begin(), data.begin() + sz);
+				// C++17 string_view constructor
+				std::string_view s(&*data.begin(), sz);
 				LOG_DEBUG(s);
 
 				const http_data_t* payload = data.data();

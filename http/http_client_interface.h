@@ -1,7 +1,10 @@
 ﻿// http_client_interface.h
 
 #pragma once
+// Turning off inheritance view dominance warning
+#pragma warning( disable : 4250 )
 
+#include <memory>
 #include <functional>
 #include <string>
 #include <utils/filesystem.h>
@@ -19,7 +22,7 @@ namespace anp
 		, int					// HTTP Status
 	)>;
 
-	class http_client_interface
+	class http_client_interface : public std::enable_shared_from_this<http_client_interface>
 	{
 	public:
 
@@ -84,4 +87,5 @@ namespace anp
 		virtual void on_notify(int ec) {};
 		virtual void on_reset() {};
 	};
+	using http_client_interface_ptr = std::shared_ptr<http_client_interface>;
 }
