@@ -48,12 +48,12 @@ namespace anp
 			m_object->query_async(endpoint, method, query, on_receive, m_headers, body);
 		}
 		
-		virtual void wait() override
+		void wait() override
 		{
 			m_object->wait();
 		}
 
-		virtual int notify(int ec) override
+		int notify(int ec) override
 		{
 			on_before_notify(ec);
 			auto result = m_object->notify(ec);

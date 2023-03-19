@@ -1,6 +1,7 @@
 ﻿// http_client_interface.h
 
 #pragma once
+
 // Turning off inheritance view dominance warning
 #pragma warning( disable : 4250 )
 
