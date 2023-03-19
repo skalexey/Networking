@@ -17,5 +17,5 @@ namespace anp
 
 	using error_cb = std::function<void(const std::error_code&)>;
 	using asio_operation_cb = std::function<void(asio::error_code&) >;
-	using result_cb = utils::void_int_arg_cb;
+	using result_cb = utils::void_int_cb;
 }
