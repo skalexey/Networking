@@ -31,12 +31,33 @@ namespace anp
 		return query(ep, q);
 	}
 
-	void authenticator::on_notify(int ec)
+	void authenticator::auth_async(const endpoint_t& ep, const std::string& path, const credentials& credentials, const anp::result_cb& on_result)
 	{
-	}
-
-	void authenticator::on_reset()
-	{
+		query_t q = credentials.query();
+		q.path = path;
+		q.method = "GET";
+		query_async(ep, q, [=, self = this](
+				const headers_t&
+				, const http_data_t* data
+				, std::size_t sz
+				, int http_status
+			)
+			{
+				if (http_status != 200)
+				{
+					on_result(self->notify(http_client::erc::http_error));
+					return false;
+				}
+				std::string_view s(data, sz);
+				if (s.find("Authenticated successfully") == std::string::npos)
+				{
+					on_result(self->notify(erc::auth_error));
+					return false;
+				}
+				on_result(self->notify(http_client::erc::no_error));
+				return true;
+			}
+		);
 	}
 
 	query_t credentials::query() const
