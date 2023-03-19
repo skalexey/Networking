@@ -25,7 +25,13 @@ namespace anp
 	class http_client_interface : public std::enable_shared_from_this<http_client_interface>
 	{
 	public:
-
+		enum receive_mode : int
+		{
+			memory_full_payload,
+			memory_tcp_packet,
+			file
+		};
+		
 		virtual int query(
 			const endpoint_t& endpoint,
 			const query_t& query,
@@ -77,6 +83,7 @@ namespace anp
 		virtual int notify(int ec) = 0;
 
 		virtual void set_receive_file(const fs::path& file_path) = 0;
+		virtual void set_receive_mode(receive_mode mode) = 0;
 
 		virtual const fs::path& get_file_path() const = 0;
 

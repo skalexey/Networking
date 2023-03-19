@@ -28,15 +28,9 @@ namespace anp
 			no_error = 0,
 			connection_error,
 			connection_process_error,
+			http_error,
 			parse_headers_error,
 			count
-		};
-
-		enum receive_mode : int
-		{
-			memory_full_payload,
-			memory_tcp_packet,
-			file
 		};
 
 		http_client();
@@ -82,6 +76,10 @@ namespace anp
 		int notify(int ec) override;
 
 		void set_receive_file(const fs::path& file_path) override;
+
+		void set_receive_mode(receive_mode mode) override {
+			m_receive_mode = mode;
+		}
 
 		const fs::path& get_file_path() const override {
 			return m_file_path;

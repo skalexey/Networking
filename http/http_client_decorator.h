@@ -61,9 +61,14 @@ namespace anp
 			return result;
 		}
 
-		virtual void set_receive_file(const fs::path& file_path) override
+		void set_receive_file(const fs::path& file_path) override
 		{
 			m_object->set_receive_file(file_path);
+		}
+
+		void set_receive_mode(receive_mode mode) override
+		{
+			m_object->set_receive_mode(mode);
 		}
 
 		const fs::path& get_file_path() const override
