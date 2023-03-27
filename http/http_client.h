@@ -85,6 +85,8 @@ namespace anp
 			return m_file_path;
 		}
 
+		bool remove_received_file();
+
 	protected:
 		std::string parse_header(const std::string& response, const std::string& header);
 

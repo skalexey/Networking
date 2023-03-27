@@ -76,6 +76,11 @@ namespace anp
 			return m_object->get_file_path();
 		}
 
+		bool remove_received_file() override
+		{
+			return m_object->remove_received_file();
+		}
+
 		void reset() override {
 			m_object->reset();
 			on_reset();

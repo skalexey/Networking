@@ -238,6 +238,13 @@ namespace anp
 		m_file_path = file_path;
 	}
 
+	bool http_client::remove_received_file()
+	{
+		if (!m_file_path.empty())
+			return utils::file::remove(m_file_path);
+		return false;
+	}
+
 	void http_client::reset()
 	{
 		LOG_DEBUG("http_client::reset()");

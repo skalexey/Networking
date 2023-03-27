@@ -88,6 +88,8 @@ namespace anp
 
 		virtual const fs::path& get_file_path() const = 0;
 
+		virtual bool remove_received_file() = 0;
+
 		virtual void reset() = 0;
 
 	protected:
