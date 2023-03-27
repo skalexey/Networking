@@ -9,7 +9,7 @@
 
 namespace anp
 {
-	class downloader : public http_client, public downloader_interface
+	class downloader : public http_client, public virtual downloader_interface
 	{
 		using base = http_client;
 
@@ -37,6 +37,10 @@ namespace anp
 			, const fs::path& target_path = {}
 			, const http_response_cb& on_response = {}
 		) override;
+
+	private:
+		void before_download(const fs::path& target_path);
+
 	};
 	using downloader_ptr = std::shared_ptr<downloader>;
 }

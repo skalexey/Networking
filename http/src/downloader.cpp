@@ -28,7 +28,8 @@ namespace anp
 		, const http_response_cb& on_response
 	)
 	{
-		set_receive_file(target_path.string() + ".dwl");
+		before_download(target_path);
+
 		query_t query = q;
 		if (query.method.empty())
 			query.method = "GET";
@@ -55,7 +56,8 @@ namespace anp
 		, const http_response_cb& on_response
 	)
 	{
-		set_receive_file(target_path.string() + ".dwl");
+		before_download(target_path);
+
 		query_t query = q;
 		if (query.method.empty())
 			query.method = "GET";
@@ -75,5 +77,11 @@ namespace anp
 				return result;
 			}
 		);
+	}
+
+	void downloader::before_download(const fs::path& target_path)
+	{
+		set_receive_file(target_path.string() + ".dwl");
+		on_before_download(target_path);
 	}
 }

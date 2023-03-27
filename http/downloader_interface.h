@@ -27,6 +27,21 @@ namespace anp
 			, const fs::path& target_path = {}
 			, const http_response_cb& on_response = {}
 		) = 0;
+
+		using on_before_download_t = std::function<void(const fs::path&)>;
+		void set_on_before_download(const on_before_download_t& on_before_download) {
+			m_on_before_download = on_before_download;
+		}
+
+	protected:
+		virtual void on_before_download(const fs::path& target_path) {
+			if (m_on_before_download)
+				m_on_before_download(target_path);
+		}
+
+	private:
+		on_before_download_t m_on_before_download;
+
 	};
 	using downloader_interface_ptr = std::shared_ptr<downloader_interface>;
 }

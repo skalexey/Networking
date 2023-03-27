@@ -9,7 +9,7 @@
 
 namespace anp
 {
-	class downloader_decorator : public http_client_decorator, public downloader_interface
+	class downloader_decorator : public http_client_decorator, public virtual downloader_interface
 	{
 	public:
 		downloader_decorator(downloader_interface* object)
@@ -29,6 +29,7 @@ namespace anp
 			, const http_response_cb& on_response = {}
 		) override
 		{
+			before_download(target_path);
 			return m_object->download_file(ep, query, target_path, on_response);
 		}
 
@@ -40,7 +41,15 @@ namespace anp
 			, const http_response_cb& on_response = {}
 		) override
 		{
+			before_download(target_path);
 			m_object->download_file_async(ep, on_result, query, target_path, on_response);
+		}
+
+	private:
+		void before_download(const fs::path& target_path) {
+			m_object->set_on_before_download([self = this](const fs::path& target_path) {
+				self->on_before_download(target_path);
+			});
 		}
 
 	private:
