@@ -11,18 +11,6 @@ namespace anp
 {
 	int headers_parser::parse(const std::string_view& s)
 	{
-		auto on_content_length_changed = [=] {
-			if (!m_content_length.has_value())
-				return false;
-			if (m_content_length.value() == 0)
-			{
-				m_content_length.reset();
-				return false;
-			}
-			// Download is going to begin
-			return true;
-		};
-
 		auto on_headers_received = [&] {
 			auto& sc = m_headers.get("Content-Length");
 			if (!sc.empty())
@@ -37,10 +25,8 @@ namespace anp
 					return erc::parse_size_error;
 				}
 
-				if (!on_content_length_changed())
-				{
+				if (!m_content_length.has_value())
 					return erc::receive_size_error;
-				}
 			}
 			else
 			{
