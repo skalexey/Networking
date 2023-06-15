@@ -67,12 +67,19 @@ set(http_INCLUDES
 	${NETLIB_DIR}/..
 )
 
+set(UTILS_DIR "${DEPS}/Utils")
+
 set(http_INCLUDES ${http_INCLUDES} PARENT_SCOPE)
 message("http: http_INCLUDES: ${http_INCLUDES}")
 include_directories(${http_INCLUDES})
 
 file(GLOB SRC CONFIGURE_DEPENDS "src/*")
 file(GLOB HEADERS CONFIGURE_DEPENDS "*.h")
+
+set(SRC ${SRC}
+	${UTILS_DIR}/src/string_utils.cpp
+	${UTILS_DIR}/src/file_utils.cpp
+)
 
 # if (HTTP)
 	add_library(http ${SRC})
