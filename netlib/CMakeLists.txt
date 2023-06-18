@@ -62,6 +62,7 @@ set(NETLIB_INCLUDES ${NETLIB_INCLUDES} PARENT_SCOPE)
 include_directories("${NETLIB_INCLUDES}")
 
 file(GLOB SRC CONFIGURE_DEPENDS "tcp/src/*")
+message("netlib: SRC: ${SRC}")
 file(GLOB HEADERS CONFIGURE_DEPENDS "tcp/*" "common/*")
 
-add_library(netlib ${SRC} ${HEADERS})
+add_library(netlib STATIC ${SRC} ${HEADERS})
