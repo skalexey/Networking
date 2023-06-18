@@ -78,11 +78,11 @@ namespace anp
 			notify(m_error_code);
 		});
 
-		m_client->set_on_connect([=, self = this](const std::error_code& ec) {
+		m_client->set_on_connect([self = this, request](const std::error_code& ec) {
 			if (!ec)
 			{
 				LOG_DEBUG("Send...");
-				m_client->send(request);
+				self->m_client->send(request);
 			}
 			else
 			{

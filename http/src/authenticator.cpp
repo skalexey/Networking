@@ -36,7 +36,7 @@ namespace anp
 		query_t q = credentials.query();
 		q.path = path;
 		q.method = "GET";
-		query_async(ep, q, [=, self = this](
+		query_async(ep, q, [self = this, on_result](
 				const headers_t&
 				, const http_data_t* data
 				, std::size_t sz
