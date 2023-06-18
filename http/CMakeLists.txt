@@ -61,6 +61,8 @@ else()
 	message("http: HTTP_STANDALONE is OFF")
 endif()
 
+set(UTILS_DIR "${DEPS}/Utils")
+
 set(http_INCLUDES 
 	${PROJECT_SOURCE_DIR}
 	${NETLIB_INCLUDES}
@@ -74,6 +76,10 @@ message("http: http_INCLUDES: ${http_INCLUDES}")
 include_directories(${http_INCLUDES})
 
 file(GLOB SRC CONFIGURE_DEPENDS "src/*")
+set (SRC ${SRC} 
+	${UTILS_DIR}/src/string_utils.cpp
+	${UTILS_DIR}/src/file_utils.cpp
+)
 file(GLOB HEADERS CONFIGURE_DEPENDS "*.h")
 
 set(SRC ${SRC}
@@ -82,6 +88,6 @@ set(SRC ${SRC}
 )
 
 # if (HTTP)
-	add_library(http ${SRC})
-	target_link_libraries(http PRIVATE netlib)
+	add_library(http STATIC ${SRC})
+	target_link_libraries(http PUBLIC netlib)
 # endif()
