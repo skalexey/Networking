@@ -45,13 +45,17 @@ else()
 endif()
 set(DEPS ${DEPS} PARENT_SCOPE)
 
-set(ASIO_PATH ${DEPS}/asio-1.22.1/include)
+set(ASIO_PATH ${DEPS}/asio-1.28.0)
 message("netlib: Asio path: '${ASIO_PATH}'")
+
+set(OPENSSL_PATH ${DEPS}/openssl-3.1.4)
+message("netlib: OpenSSL path: '${OPENSSL_PATH}'")
 
 set(UTILS_DIR "${DEPS}/Utils")
 
 set(NETLIB_INCLUDES 
-	${ASIO_PATH}
+	${ASIO_PATH}/include
+	${OPENSSL_PATH}/include
 	${PROJECT_SOURCE_DIR}
 	${PROJECT_SOURCE_DIR}/common
 	${UTILS_DIR}/include
@@ -61,8 +65,10 @@ set(NETLIB_INCLUDES ${NETLIB_INCLUDES} PARENT_SCOPE)
 
 include_directories("${NETLIB_INCLUDES}")
 
-file(GLOB SRC CONFIGURE_DEPENDS "tcp/src/*")
+file(GLOB_RECURSE SRC CONFIGURE_DEPENDS "tcp/src/*")
 message("netlib: SRC: ${SRC}")
-file(GLOB HEADERS CONFIGURE_DEPENDS "tcp/*" "common/*")
+file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS "tcp/*" "common/*")
 
 add_library(netlib STATIC ${SRC} ${HEADERS})
+target_link_directories(netlib PUBLIC ${OPENSSL_PATH})
+target_link_libraries(netlib PUBLIC libssl_static libcrypto_static)

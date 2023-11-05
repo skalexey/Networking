@@ -89,5 +89,5 @@ set(SRC ${SRC}
 
 # if (HTTP)
 	add_library(http STATIC ${SRC})
-	target_link_libraries(http PUBLIC netlib)
+	target_link_libraries(http PRIVATE netlib)
 # endif()

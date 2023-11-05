@@ -46,7 +46,7 @@ namespace anp
 						if (OnClientConnect(c))
 						{
 							m_connections.emplace(c->get_id(), c);
-							c->ReadAsync();
+							c->read_async();
 							LOCAL_VERBOSE("[" << c->get_id() << "] Connection Approved");
 						}
 						else

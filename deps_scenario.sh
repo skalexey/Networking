@@ -7,7 +7,8 @@ function deps_scenario()
     source $THIS_DIR/deps_config.sh
     
     download_dependency "Utils" "$depsLocation" "git@github.com:skalexey/Utils.git"
-    download_dependency "asio-1.22.1" "$depsLocation" "https://sourceforge.net/projects/asio/files/asio/1.22.1%20%28Stable%29/asio-1.22.1.tar.bz2/download"
+    download_dependency "asio-1.28.0" "$depsLocation" "https://sourceforge.net/projects/asio/files/asio/1.28.0%20%28Stable%29/asio-1.28.0.tar.gz/download"
+    download_dependency "OpenSSL-3.1.4" "$depsLocation" "https://www.openssl.org/source/openssl-3.1.4.tar.gz"
 }
 
 deps_scenario $@

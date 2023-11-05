@@ -78,7 +78,7 @@ namespace anp
 			notify(m_error_code);
 		});
 
-		m_client->set_on_connect([self = this, request](const std::error_code& ec) {
+		m_client->add_on_connect([self = this, request](const std::error_code& ec) {
 			if (!ec)
 			{
 				LOG_DEBUG("Send...");
