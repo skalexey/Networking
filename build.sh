@@ -48,7 +48,7 @@ build()
 	for arg in "$@" 
 	do
 		echo "arg[$argIndex]: '$arg'"
-		
+		arg=${arg,,}
 		if [[ $argIndex -eq 0 ]]; then
 			local rootDirectory=$arg
 		else
@@ -112,6 +112,11 @@ build()
 
 	if [[ "$rootDirectory" != "." ]]; then
 		local folderName=$rootDirectory
+	fi
+
+	if [ -f "pre_build.sh" ]; then
+		./pre_build.sh $@
+		[ $? -ne 0 ] && log_error "pre_build.sh error" " -" && return 6
 	fi
 
 	local build="$rootDirectory/${buildFolderPrefix}-cmake"

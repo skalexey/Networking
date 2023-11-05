@@ -26,7 +26,7 @@ function direct_download()
 		rm "$o"
 		return $?
 	else
-		return 3
+		return 3 # Unknown file type
 	fi
 	return 0
 }
