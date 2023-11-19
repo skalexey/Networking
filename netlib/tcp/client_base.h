@@ -26,7 +26,11 @@ namespace anp
 			bool connect(const std::string& host, int port, const anp::error_cb& cb = nullptr);
 			// disconnect() Should be called from the thread that called connect()
 			void disconnect();
-			bool is_connected() { return !!m_connection; }
+			bool is_connected() {
+				if (m_connection)
+					return m_connection->is_connected();
+				return false;
+			}
 			void send(const std::string& msg);
 			void set_on_receive(const data_cb& cb);
 			void add_on_connect(const error_cb& cb);
@@ -44,14 +48,14 @@ namespace anp
 			void on_connection_close();
 
 		private:
-			std::unique_ptr<asio::io_context> m_ctx;
+			std::unique_ptr<asio::io_context> m_ctx = nullptr;
 		#ifdef __cpp_lib_jthread
 			std::jthread m_thr_ctx;
 		#else
 			std::thread m_thr_ctx;
 		#endif
-			std::unique_ptr<asio::io_context::work> m_idle_work;
-			std::unique_ptr<anp::tcp::connection_base> m_connection;
+			std::unique_ptr<asio::io_context::work> m_idle_work = nullptr;
+			std::unique_ptr<anp::tcp::connection_base> m_connection = nullptr;
 			data_cb m_on_receive;
 			error_cb m_on_connect;
 			utils::void_cb m_on_close;

@@ -135,15 +135,12 @@ namespace anp
 			PROFILE_TIME("client_base::disconnect()");
 			if (is_connected())
 			{
-				if (m_connection->is_connected())
-				{
-					if (std::this_thread::get_id() != m_ctx_thread_id)
-						asio::post(*m_ctx, [&] {
-							m_connection->close();
-						});
-					else
-						m_connection->close();
-				}
+				if (std::this_thread::get_id() != m_ctx_thread_id)
+					asio::post(*m_ctx, [self = this] {
+						self->m_connection->close();
+					});
+				else
+					m_connection->close();
 
 				LOCAL_VERBOSE("	Stop the context");
 				m_ctx->stop();
