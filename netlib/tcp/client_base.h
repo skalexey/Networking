@@ -37,7 +37,7 @@ namespace anp
 			void set_on_close(const utils::void_cb& cb);
 
 		protected:
-			virtual std::unique_ptr<anp::tcp::connection_base> make_connection() {
+			virtual std::unique_ptr<anp::tcp::connection> make_connection() {
 				return std::make_unique<anp::tcp::connection>(*m_ctx);
 			}
 
@@ -55,7 +55,7 @@ namespace anp
 			std::thread m_thr_ctx;
 		#endif
 			std::unique_ptr<asio::io_context::work> m_idle_work = nullptr;
-			std::unique_ptr<anp::tcp::connection_base> m_connection = nullptr;
+			std::unique_ptr<anp::tcp::connection> m_connection = nullptr;
 			data_cb m_on_receive;
 			error_cb m_on_connect;
 			utils::void_cb m_on_close;

@@ -53,12 +53,14 @@ message("netlib: OpenSSL path: '${OPENSSL_PATH}'")
 
 set(UTILS_DIR "${DEPS}/Utils")
 
+set(CERTIFY_DIR "${DEPS}/certify")
 set(NETLIB_INCLUDES 
 	${ASIO_PATH}/include
 	${OPENSSL_PATH}/include
 	${PROJECT_SOURCE_DIR}
 	${PROJECT_SOURCE_DIR}/common
 	${UTILS_DIR}/include
+	${CERTIFY_DIR}/include
 )
 
 set(NETLIB_INCLUDES ${NETLIB_INCLUDES} PARENT_SCOPE)
@@ -66,8 +68,10 @@ set(NETLIB_INCLUDES ${NETLIB_INCLUDES} PARENT_SCOPE)
 include_directories("${NETLIB_INCLUDES}")
 
 file(GLOB_RECURSE SRC CONFIGURE_DEPENDS "tcp/src/*")
+set( SRC ${SRC} ${UTILS_DIR}/src/envar.cpp)
+
 message("netlib: SRC: ${SRC}")
-file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS "tcp/*" "common/*")
+file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS "*.h" "*.hpp")
 
 add_library(netlib STATIC ${SRC} ${HEADERS})
 target_link_directories(netlib PUBLIC ${OPENSSL_PATH})

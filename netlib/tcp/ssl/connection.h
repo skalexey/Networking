@@ -4,8 +4,8 @@
 #pragma once
 
 #include <memory>
-#include <asio/ssl.hpp>
-#include <tcp/connection_base.h>
+#include <tcp/connection.h>
+#include <tcp/ssl/socket.h>
 
 namespace anp
 {
@@ -13,25 +13,29 @@ namespace anp
 	{
 		namespace ssl
 		{
-			class connection : public tcp::connection_base
+			using ssl_connection_base = tcp::connection;
+			class connection : public ssl_connection_base
 			{
 				friend class server;
 			
 			public:
-				using base = tcp::connection_base;
-
+				using base = ssl_connection_base;
+				using socket_t = ssl::socket;
 				connection(asio::io_context& io_ctx);
-				connection(asio::io_context& io_ctx, asio::ip::tcp::socket socket, int id);
-				
+				connection(asio::io_context& io_ctx, base::soc_t socket, int id);
+
 			protected:
 				void on_connect(std::error_code ec, const asio::ip::tcp::endpoint& ep) override;
+				const base::socket_t& get_socket() const override {
+					return m_socket;
+				}
 
 			private:
 				void init();
 
 			private:
 				asio::ssl::context m_ssl_ctx;
-				asio::ssl::stream<asio::ip::tcp::socket&> m_soc;
+				socket_t m_socket;
 			};
 			typedef std::shared_ptr<connection> connection_ptr;
 		}

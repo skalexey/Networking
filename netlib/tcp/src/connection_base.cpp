@@ -1,5 +1,4 @@
 #include <tcp/connection_base.h>
-#include <asio/ts/buffer.hpp>
 #include <utils/Log.h>
 SET_LOG_VERBOSE(true)
 LOG_TITLE("tcp/connection_base")
@@ -19,7 +18,7 @@ namespace anp
 		{
 			if (m_wait_read)
 				return;
-			
+
 			m_wait_read = true;
 
 			if (!is_connected())
@@ -28,54 +27,41 @@ namespace anp
 				return;
 			}
 
-			m_soc.async_read_some(asio::buffer(buf.data(), buf.size())
-				, [&](std::error_code ec, std::size_t length) {
-					if (!is_connected())
-					{
-						LOG_DEBUG("Receiving when already disconnected...");
-						return;
-					}
-					m_wait_read = false;
-					LOCAL_VERBOSE("async_read_some func called");
-					if (!ec)
-					{
-						LOCAL_VERBOSE("\n\n\tRead " << length << " bytes\n");
-						//for (int i = 0; i < length; i++)
-						//	LOCAL_VERBOSE(buf[i]);
-						if (m_on_receive)
-							if (!m_on_receive(buf, length, m_id))
-							{
-								if (is_connected())
-									close();
-								return;
-							}
-						read_async();
-					}
-					else
-					{
-						LOCAL_VERBOSE("\terror: '" << ec.message() << "'");
-						if (is_connected())
-							close();
-					}
+			socket().async_read_some(buf, [&](std::error_code ec, std::size_t length) {
+				if (!is_connected())
+				{
+					LOG_DEBUG("Receiving when already disconnected...");
+					return;
 				}
-			);
+				m_wait_read = false;
+				LOCAL_VERBOSE("async_read_some func called");
+				if (!ec)
+				{
+					LOCAL_VERBOSE("\n\n\tRead " << length << " bytes\n");
+					//for (int i = 0; i < length; i++)
+					//	LOCAL_VERBOSE(buf[i]);
+					if (m_on_receive)
+						if (!m_on_receive(buf, length, m_id))
+						{
+							if (is_connected())
+								close();
+							return;
+						}
+					read_async();
+				}
+				else
+				{
+					LOCAL_VERBOSE("\terror: '" << ec.message() << "'");
+					if (is_connected())
+						close();
+				}
+				});
 		}
 
 		connection_base::~connection_base()
 		{
 			LOG_DEBUG("connection_base::~connection_base");
 		}
-
-		connection_base::connection_base(asio::io_context& ctx)
-			: m_ctx(ctx)
-			, m_soc(ctx)
-		{}
-
-		connection_base::connection_base(asio::io_context& ctx, asio::ip::tcp::socket socket, int id)
-			: m_ctx(ctx)
-			, m_soc(std::move(socket))
-			, m_id(id)
-		{}
 
 		void anp::tcp::connection_base::connect(const asio::ip::tcp::resolver::results_type& ep, const asio_operation_cb& on_result)
 		{
@@ -84,7 +70,7 @@ namespace anp
 			if (on_result)
 				add_on_connect(on_result);
 
-			asio::async_connect(m_soc, ep,
+			asio::async_connect(socket().soc(), ep,
 				[self = this, on_result](std::error_code ec, asio::ip::tcp::endpoint ep)
 				{
 					self->on_connect(ec, ep);
@@ -109,7 +95,7 @@ namespace anp
 			if (ec)
 				return;
 
-			if (m_soc.is_open())
+			if (socket().is_open())
 			{
 				LOCAL_VERBOSE("Socket is open. Set up the read task");
 				read_async();
@@ -130,7 +116,7 @@ namespace anp
 					LOCAL_WARNING("Call close while already disconnected");
 					return;
 				}
-				m_soc.close();
+				socket().close();
 				if (m_on_close)
 					m_on_close();
 			}
@@ -150,10 +136,9 @@ namespace anp
 					return;
 				}
 				asio::error_code ec;
-				asio::async_write(m_soc, asio::buffer(msg.data(), msg.size())
-					, [&](std::error_code ec, std::size_t wrc) {
-						LOCAL_VERBOSE("Written " << wrc << " bytes");
-						read_async();
+				socket().async_write(msg.c_str(), msg.size(), [&](std::error_code ec, std::size_t wrc) {
+					LOCAL_VERBOSE("Written " << wrc << " bytes");
+					read_async();
 					});
 				});
 		}
@@ -167,7 +152,7 @@ namespace anp
 		{
 			m_on_connect.push_back(cb);
 		}
-		
+
 		void connection_base::set_on_close(const utils::void_cb& cb)
 		{
 			m_on_close = cb;
