@@ -17,7 +17,7 @@ SET_LOG_DEBUG(true);
 namespace anp
 {
 	int uploader::upload_file(
-		const endpoint_t& ep,
+		const tcp::endpoint_t& ep,
 		const fs::path& local_path,
 		const query_t& query
 	)

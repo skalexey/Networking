@@ -30,8 +30,8 @@ namespace anp
 			}
 			else
 			{
-				LOG_ERROR("No content length received from the server");
-				return erc::no_content_length;
+				LOG_WARNING("No content length received from the server");
+				//return erc::no_content_length;
 			}
 			return erc::done;
 		};

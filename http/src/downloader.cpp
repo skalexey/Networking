@@ -22,7 +22,7 @@ namespace ch = std::chrono;
 namespace anp
 {
 	int downloader::download_file(
-		const endpoint_t& ep
+		const tcp::endpoint_t& ep
 		, const query_t& q
 		, const fs::path& target_path
 		, const http_response_cb& on_response
@@ -49,7 +49,7 @@ namespace anp
 	}
 
 	void downloader::download_file_async(
-		const endpoint_t& ep
+		const tcp::endpoint_t& ep
 		, const result_cb& on_result
 		, const query_t& q
 		, const fs::path& target_path

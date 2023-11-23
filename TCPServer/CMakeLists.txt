@@ -50,7 +50,7 @@ else()
 endif()
 
 include_directories(
-	"${NETLIB_INCLUDES}"
+	"${netlib_INCLUDES}"
 	"${ROOT_DIR}"
 	"${ROOT_DIR}/include"
 )

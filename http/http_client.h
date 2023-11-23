@@ -37,13 +37,13 @@ namespace anp
 		~http_client();
 
 		int request(
-			const endpoint_t& endpoint,
+			const tcp::endpoint_t& endpoint,
 			const std::string& request,
 			const http_response_cb& on_receive
 		) override;
 
 		void request_async(
-			const endpoint_t& endpoint,
+			const tcp::endpoint_t& endpoint,
 			const std::string& request,
 			const http_response_cb& on_receive
 		) override;
@@ -53,7 +53,7 @@ namespace anp
 		}
 
 		void query_async(
-			const endpoint_t& endpoint,
+			const tcp::endpoint_t& endpoint,
 			const std::string& method,
 			const std::string& query,
 			const http_response_cb& on_receive = http_response_cb(),
@@ -64,7 +64,7 @@ namespace anp
 		// MSVC fix.
 		// This function is actually inherited from http_client_interface and should be visible
 		void query_async(
-			const endpoint_t& endpoint,
+			const tcp::endpoint_t& endpoint,
 			const query_t& query,
 			const http_response_cb& on_receive = http_response_cb()
 		) override {
@@ -91,7 +91,7 @@ namespace anp
 		std::string parse_header(const std::string& response, const std::string& header);
 
 	protected:
-		void reset() override;
+		void reset(client_type c = client_type::http) override;
 		
 	protected:
 		std::unique_ptr<utils::data::receiver_base<http_data_t>> m_data_receiver;
@@ -101,7 +101,7 @@ namespace anp
 		std::mutex m_cv_mtx;
 		std::unique_lock<std::mutex> m_cv_ul;
 		std::condition_variable m_cv;
-		std::unique_ptr<tcp::client> m_client;
+		std::unique_ptr<anp::tcp::client_base> m_client;
 		headers_parser m_headers_parser;
 		receive_mode m_receive_mode = receive_mode::memory_full_payload;
 		fs::path m_file_path;

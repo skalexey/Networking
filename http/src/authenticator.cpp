@@ -23,7 +23,7 @@ namespace ch = std::chrono;
 
 namespace anp
 {
-	int authenticator::auth(const endpoint_t& ep, const std::string& path, const credentials& credentials)
+	int authenticator::auth(const tcp::endpoint_t& ep, const std::string& path, const credentials& credentials)
 	{
 		query_t q = credentials.query();
 		q.path = path;
@@ -31,7 +31,7 @@ namespace anp
 		return query(ep, q);
 	}
 
-	void authenticator::auth_async(const endpoint_t& ep, const std::string& path, const credentials& credentials, const anp::result_cb& on_result)
+	void authenticator::auth_async(const tcp::endpoint_t& ep, const std::string& path, const credentials& credentials, const anp::result_cb& on_result)
 	{
 		query_t q = credentials.query();
 		q.path = path;

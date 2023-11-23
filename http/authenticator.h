@@ -27,8 +27,8 @@ namespace anp
 			auth_error = http_client::erc::count,
 		};
 
-		int auth(const endpoint_t& ep, const std::string& path, const credentials& credentials);
-		void auth_async(const endpoint_t& ep, const std::string& path, const credentials& credentials, const anp::result_cb& on_result);
+		int auth(const tcp::endpoint_t& ep, const std::string& path, const credentials& credentials);
+		void auth_async(const tcp::endpoint_t& ep, const std::string& path, const credentials& credentials, const anp::result_cb& on_result);
 
 	protected:
 		void on_notify(int ec) override {};

@@ -65,7 +65,7 @@ set(UTILS_DIR "${DEPS}/Utils")
 
 set(http_INCLUDES 
 	${PROJECT_SOURCE_DIR}
-	${NETLIB_INCLUDES}
+	${netlib_INCLUDES}
 	${NETLIB_DIR}/..
 )
 
@@ -89,5 +89,5 @@ set(SRC ${SRC}
 
 # if (HTTP)
 	add_library(http STATIC ${SRC})
-	target_link_libraries(http PRIVATE netlib)
+	target_link_libraries(http PUBLIC netlib)
 # endif()

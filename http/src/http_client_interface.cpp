@@ -5,7 +5,7 @@
 namespace anp
 {
 	int http_client_interface::query(
-		const endpoint_t& endpoint,
+		const tcp::endpoint_t& endpoint,
 		const query_t& q,
 		const http_response_cb& on_receive
 	)
@@ -14,7 +14,7 @@ namespace anp
 	}
 
 	void http_client_interface::query_async(
-		const endpoint_t& endpoint,
+		const tcp::endpoint_t& endpoint,
 		const query_t& query,
 		const http_response_cb& on_receive
 	)
@@ -23,7 +23,7 @@ namespace anp
 	}
 
 	int http_client_interface::query(
-		const endpoint_t& endpoint,
+		const tcp::endpoint_t& endpoint,
 		const std::string& method,
 		const std::string& query,
 		const http_response_cb& on_receive,

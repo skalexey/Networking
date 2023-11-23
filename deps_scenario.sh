@@ -7,7 +7,8 @@ function deps_scenario()
     source $THIS_DIR/deps_config.sh
     
     download_dependency "Utils" "$depsLocation" "git@github.com:skalexey/Utils.git"
-    download_dependency "asio-1.28.0" "$depsLocation" "https://sourceforge.net/projects/asio/files/asio/1.28.0%20%28Stable%29/asio-1.28.0.tar.gz/download"
+    download_dependency "boost_1_81_0" "$depsLocation" "https://boostorg.jfrog.io/artifactory/main/release/1.81.0/source/boost_1_81_0.tar.bz2"
+    download_dependency "certify" "$depsLocation" "https://github.com/djarek/certify.git"
     download_dependency "OpenSSL-3.1.4" "$depsLocation" "https://www.openssl.org/source/openssl-3.1.4.tar.gz"
 }
 

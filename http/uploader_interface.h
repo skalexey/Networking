@@ -4,7 +4,7 @@
 
 #include <utils/filesystem.h>
 #include "query.h"
-#include "endpoint.h"
+#include <tcp/endpoint.h>
 #include "http_client_interface.h"
 
 namespace anp
@@ -13,7 +13,7 @@ namespace anp
 	{
 	public:
 		virtual int upload_file(
-			const endpoint_t& ep,
+			const tcp::endpoint_t& ep,
 			const fs::path& target_path,
 			const query_t& query
 		) = 0;

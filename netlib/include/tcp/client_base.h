@@ -1,7 +1,4 @@
-﻿// client.h : Include file for standard system include files,
-// or project specific include files.
-
-#pragma once
+﻿#pragma once
 
 #include <cstddef>
 #include <memory>
@@ -20,24 +17,19 @@ namespace anp
 		class client_base
 		{
 		public:
-			client_base() = default;
 			~client_base();
 			// All operations are asynchronouse
 			bool connect(const std::string& host, int port, const anp::error_cb& cb = nullptr);
 			// disconnect() Should be called from the thread that called connect()
 			void disconnect();
-			bool is_connected() {
-				if (m_connection)
-					return m_connection->is_connected();
-				return false;
-			}
+			bool is_connected() const;
 			void send(const std::string& msg);
 			void set_on_receive(const data_cb& cb);
 			void add_on_connect(const error_cb& cb);
 			void set_on_close(const utils::void_cb& cb);
 
 		protected:
-			virtual std::unique_ptr<anp::tcp::connection_base> make_connection() {
+			virtual std::unique_ptr<anp::tcp::connection> make_connection() {
 				return std::make_unique<anp::tcp::connection>(*m_ctx);
 			}
 
@@ -55,7 +47,7 @@ namespace anp
 			std::thread m_thr_ctx;
 		#endif
 			std::unique_ptr<asio::io_context::work> m_idle_work = nullptr;
-			std::unique_ptr<anp::tcp::connection_base> m_connection = nullptr;
+			std::unique_ptr<anp::tcp::connection> m_connection = nullptr;
 			data_cb m_on_receive;
 			error_cb m_on_connect;
 			utils::void_cb m_on_close;

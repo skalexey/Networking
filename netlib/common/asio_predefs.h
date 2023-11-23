@@ -7,3 +7,12 @@
 #ifndef ASIO_STANDALONE
 	#define ASIO_STANDALONE
 #endif
+
+#include <system_error>
+namespace boost
+{
+	namespace asio
+	{
+		typedef std::error_code error_code;
+	}
+}

@@ -14,7 +14,7 @@ namespace anp
 		http_client_decorator(http_client_interface* object) : m_object(object) {}
 
 		int request(
-			const endpoint_t& endpoint,
+			const tcp::endpoint_t& endpoint,
 			const std::string& request,
 			const http_response_cb& on_receive
 		)
@@ -23,7 +23,7 @@ namespace anp
 		}
 
 		void request_async(
-			const endpoint_t& endpoint,
+			const tcp::endpoint_t& endpoint,
 			const std::string& request,
 			const http_response_cb& on_receive
 		)
@@ -37,7 +37,7 @@ namespace anp
 		}
 
 		void query_async(
-			const endpoint_t& endpoint,
+			const tcp::endpoint_t& endpoint,
 			const std::string& method,
 			const std::string& query,
 			const http_response_cb& on_receive = http_response_cb(),
@@ -81,8 +81,8 @@ namespace anp
 			return m_object->remove_received_file();
 		}
 
-		void reset() override {
-			m_object->reset();
+		void reset(client_type c = client_type::http) override {
+			m_object->reset(c);
 			on_reset();
 		};
 

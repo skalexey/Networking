@@ -4,13 +4,13 @@
 #include <string_view>
 #include <map>
 #include <string>
-#include <tcp/client.h>
 #include <utils/Log.h>
 #include <utils/string_utils.h>
 #include <utils/profiler.h>
 #include <utils/data_receiver_file.h>
 #include <utils/data_receiver_memory.h>
 #include <tcp/client.h>
+#include <tcp/ssl/client.h>
 #include "http_client.h"
 
 LOG_PREFIX("[http_client]: ");
@@ -54,7 +54,7 @@ namespace anp
 	}
 
 	int http_client::request(
-		const endpoint_t& endpoint
+		const tcp::endpoint_t& endpoint
 		, const std::string& request
 		, const http_response_cb& on_receive
 	)
@@ -65,12 +65,13 @@ namespace anp
 	}
 
 	void http_client::request_async(
-		const endpoint_t& endpoint
+		const tcp::endpoint_t& endpoint
 		, const std::string& request
 		, const http_response_cb& on_receive
 	)
 	{
-		reset();
+		auto c = endpoint.port == 443 ? client_type::https : client_type::http;
+		reset(c);
 
 		LOG_VERBOSE("request: " << request);
 
@@ -180,7 +181,7 @@ namespace anp
 	
 
 	void http_client::query_async(
-		const endpoint_t& endpoint,
+		const tcp::endpoint_t& endpoint,
 		const std::string& method,
 		const std::string& query,
 		const http_response_cb& on_receive,
@@ -245,11 +246,21 @@ namespace anp
 		return false;
 	}
 
-	void http_client::reset()
+	void http_client::reset(client_type c)
 	{
 		LOG_DEBUG("http_client::reset()");
 		m_error_code = erc::unknown;
-		m_client = std::make_unique<anp::tcp::client>();
+		switch (c)
+		{
+			case client_type::http:
+				m_client = std::make_unique<tcp::client>();
+				break;
+			case client_type::https:
+				m_client = std::make_unique<tcp::ssl::client>();
+				break;
+			default:
+				throw std::exception("Unknown client type");
+		}
 		m_data_receiver.reset();
 		m_headers_parser.reset();
 		// TODO: clean this too

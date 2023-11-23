@@ -11,7 +11,7 @@
 #include <utils/filesystem.h>
 #include "query.h"
 #include "headers.h"
-#include "endpoint.h"
+#include <tcp/endpoint.h>
 
 namespace anp
 {
@@ -34,25 +34,25 @@ namespace anp
 		};
 		
 		virtual int query(
-			const endpoint_t& endpoint,
+			const tcp::endpoint_t& endpoint,
 			const query_t& query,
 			const http_response_cb& on_receive = http_response_cb()
 		);
 
 		virtual void query_async(
-			const endpoint_t& endpoint,
+			const tcp::endpoint_t& endpoint,
 			const query_t& query,
 			const http_response_cb& on_receive = http_response_cb()
 		);
 
 		virtual int request(
-			const endpoint_t& endpoint,
+			const tcp::endpoint_t& endpoint,
 			const std::string& request,
 			const http_response_cb& on_receive
 		) = 0;
 
 		virtual void request_async(
-			const endpoint_t& endpoint,
+			const tcp::endpoint_t& endpoint,
 			const std::string& request,
 			const http_response_cb& on_receive
 		) = 0;
@@ -61,7 +61,7 @@ namespace anp
 
 		// Alternative interface
 		virtual int query(
-			const endpoint_t& endpoint,
+			const tcp::endpoint_t& endpoint,
 			const std::string& method,
 			const std::string& query,
 			const http_response_cb& on_receive = http_response_cb(),
@@ -70,7 +70,7 @@ namespace anp
 		);
 
 		virtual void query_async(
-			const endpoint_t& endpoint,
+			const tcp::endpoint_t& endpoint,
 			const std::string& method,
 			const std::string& query,
 			const http_response_cb& on_receive = http_response_cb(),
@@ -90,7 +90,12 @@ namespace anp
 
 		virtual bool remove_received_file() = 0;
 
-		virtual void reset() = 0;
+		enum class client_type
+		{
+			http,
+			https
+		};
+		virtual void reset(client_type c = client_type::http) = 0;
 
 	protected:
 		virtual void on_before_notify(int ec) {};

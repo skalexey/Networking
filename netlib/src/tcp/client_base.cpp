@@ -20,6 +20,7 @@ namespace anp
 {
 	namespace tcp
 	{
+		using namespace boost;
 		struct error_category_user : public std::error_category
 		{
 			const char* name() const noexcept override {
@@ -80,24 +81,22 @@ namespace anp
 				}
 				catch (std::exception& ex)
 				{
-					std::cout << "Exception in context thread cathced: '" << ex.what() << "'\n";
+					std::cout << "Exception in context thread caught: '" << ex.what() << "'\n";
 				}
 				catch (...)
 				{
-					std::cout << "Exception in context thread cathced\n";
+					std::cout << "Exception in context thread caught\n";
 				}
 			});
 			m_ctx_thread_id = m_thr_ctx.get_id();
 			try
 			{
-				asio::ip::tcp::resolver resolver(*m_ctx);
-				asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(host, std::to_string(port));
 				m_connection = make_connection();
 				m_connection->set_on_receive(m_on_receive);
 				m_connection->add_on_connect(m_on_connect);
 				m_connection->set_on_close(std::bind(&client_base::on_connection_close, this));
 				LOCAL_VERBOSE("	Connect the socket");
-				m_connection->connect(endpoints, [self = this, on_connect](const std::error_code& ec) {
+				m_connection->connect({host, port}, [self = this, on_connect](const std::error_code& ec) {
 					if (ec)
 					{
 						LOCAL_VERBOSE("Error during connection");
@@ -189,6 +188,13 @@ namespace anp
 			{
 				LOCAL_VERBOSE("Disconnect called while already disconnected");
 			}
+		}
+
+		bool client_base::is_connected() const
+		{
+			if (m_connection)
+				return m_connection->is_connected();
+			return false;
 		}
 
 		void client_base::send(const std::string& msg)
