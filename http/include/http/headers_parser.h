@@ -26,11 +26,17 @@ namespace anp
 			count
 		};
 
+		enum transfer_encoding_type {
+			unknown,
+			chunked,
+		};
+
 	public:
 		int parse(const std::string_view& s);
 		int error_code() const { return m_error_code; }
 		int status() const { return m_status; }
-		std::size_t content_length() const { return m_content_length.has_value() ? m_content_length.value() : 0; }
+		std::size_t content_length() const { return m_content_length.has_value() ? m_content_length.value() : -1; }
+		transfer_encoding_type transfer_encoding() const { return m_transfer_encoding; }
 		std::size_t cursor() const { return m_cursor; }
 		const headers_t& headers() const { return m_headers; }
 		void reset();
@@ -42,5 +48,6 @@ namespace anp
 		int m_status = -1;
 		std::string m_last_data;
 		std::size_t m_cursor = 0;
+		transfer_encoding_type m_transfer_encoding = transfer_encoding_type::unknown;
 	};
 }

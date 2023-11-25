@@ -18,7 +18,6 @@ set(CMAKE_CXX_STANDARD 17)
 # Include sub-projects.
 option(NETLIB_EXTERNAL "Don't add netlib subdirectory inside nested projects" ON)
 add_subdirectory("netlib")
-set(HTTP_STANDALONE OFF)
 add_subdirectory("http")
 add_subdirectory("Test")
 add_subdirectory("TCPClient")

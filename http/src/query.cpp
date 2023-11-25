@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "query.h"
+#include <http/query.h>
 
 namespace
 {

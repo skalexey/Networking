@@ -19,12 +19,13 @@ macro(setup_module)
 	# Certify dependency
 	set(CERTIFY_DIR "${DEPS}/certify")
 
+	module_message("Parent dir: ${PARENT_DIR}")
+
 	module_add_includes( 
 		${BOOST_PATH}
 		${BOOST_PATH}/boost
 		${OPENSSL_PATH}/include
-		${PROJECT_SOURCE_DIR}
-		${PROJECT_SOURCE_DIR}/common
+		${PARENT_DIR}/include
 		${UTILS_DIR}/include
 		${CERTIFY_DIR}/include
 	)

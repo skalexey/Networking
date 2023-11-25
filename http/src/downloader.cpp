@@ -12,7 +12,7 @@
 #include <utils/Log.h>
 #include <utils/string_utils.h>
 #include <tcp/client.h>
-#include "downloader.h"
+#include <http/downloader.h>
 
 LOG_PREFIX("[downloader]: ");
 LOG_POSTFIX("\n");

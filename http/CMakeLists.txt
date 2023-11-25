@@ -1,93 +1,47 @@
-﻿# CMakeList.txt : Top-level CMake project file, do global configuration
-# and include sub-projects here.
-#
-cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required (VERSION 3.15)
 
-project (http)
+project(http C CXX)
 
-if(MSVC)
-	# fix __cplusplus macro for MSVC
-	add_compile_options(
-		"/Zc:__cplusplus"
-		"/std:c++latest"
+macro(setup_module)
+	module_message("Setting up module: ${MODULE_NAME}")
+
+	module_message("Parent dir: ${PARENT_DIR}")
+
+	set(NETLIB_DIR "${PARENT_DIR}/netlib")
+	add_dependency_module(${NETLIB_DIR} netlib)
+	set(UTILS_DIR "${DEPS}/Utils")
+
+	# set(http_INCLUDES ${SOME_INCLUDES})
+
+	set_headers()
+	GROUP_SRC("${HEADERS}" "${CMAKE_CURRENT_SOURCE_DIR}/include")
+	add_src(${HEADERS})
+
+	file(GLOB SRC CONFIGURE_DEPENDS "src/*")
+	add_src( 
+		${UTILS_DIR}/src/string_utils.cpp
+		${UTILS_DIR}/src/file_utils.cpp
+		# for IDE:
+		${UTILS_DIR}/include/utils/data_receiver_base.h
+		${UTILS_DIR}/include/utils/data_receiver_memory.h
+		${UTILS_DIR}/include/utils/data_receiver_file.h
+		${UTILS_DIR}/include/utils/data_receiver.h
 	)
-else()
-	set(CMAKE_CXX_STANDARD 17)
-endif()
 
-if (LOG_ON)
-	message("http: Log is ON")
-	add_compile_definitions("LOG_ON")
-else()
-	message("http: Log is OFF")
-endif ()
-if (LOG_LEVEL_VERBOSE)
-	message("http: LOG_LEVEL_VERBOSE is ON")
-	add_compile_definitions("LOG_LEVEL_VERBOSE")
-else()
-	message("http: LOG_LEVEL_VERBOSE is OFF")
-endif()
+	module_add_includes( 
+		${UTILS_DIR}/include
+		${CERTIFY_DIR}/include
+	)
 
-# set build folder name variable for any dependency
-if (CMAKE_CXX_COMPILER EQUAL "g++")
-	set(BUILD_DIR_NAME "Build-g++")
-else()
-	set(BUILD_DIR_NAME "Build-cmake")
-endif()
+	# Group sources for IDE
+	set_headers()
+	GROUP_SRC("${HEADERS}" "${CMAKE_CURRENT_SOURCE_DIR}/include")
+	add_src(${HEADERS}) # Add headers as sources to make them visible in IDE
 
-# set deps variables
-set(http_DEPS "$ENV{http_deps}")
-set(http_DEPS "${http_DEPS}" PARENT_SCOPE)
-if ("${http_DEPS}" STREQUAL "")
-	file(TO_CMAKE_PATH "$ENV{build_deps}" DEPS)
-endif()
-if ("${DEPS}" STREQUAL "")
-	set(DEPS ${http_DEPS})
-endif()
-if ("${DEPS}" STREQUAL "")
-	message(SEND_ERROR "http: ERROR: DEPS is not specified. Take the default value")
-	set(DEPS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies)
-else()
-	message("http: DEPS: ${DEPS}")
-endif()
-set(DEPS ${DEPS} PARENT_SCOPE)
+	# add library
+	module_add_library()
+endmacro()
 
-option(HTTP_STANDALONE "Link netlib or not" ON)
-
-set(NETLIB_DIR "${PROJECT_SOURCE_DIR}/../netlib")
-if (HTTP_STANDALONE)
-	add_subdirectory(${NETLIB_DIR} ${NETLIB_DIR}/${BUILD_DIR_NAME})
-else()
-	message("http: HTTP_STANDALONE is OFF")
-endif()
-
-set(UTILS_DIR "${DEPS}/Utils")
-
-set(http_INCLUDES 
-	${PROJECT_SOURCE_DIR}
-	${netlib_INCLUDES}
-	${NETLIB_DIR}/..
-)
-
-set(UTILS_DIR "${DEPS}/Utils")
-
-set(http_INCLUDES ${http_INCLUDES} PARENT_SCOPE)
-message("http: http_INCLUDES: ${http_INCLUDES}")
-include_directories(${http_INCLUDES})
-
-file(GLOB SRC CONFIGURE_DEPENDS "src/*")
-set (SRC ${SRC} 
-	${UTILS_DIR}/src/string_utils.cpp
-	${UTILS_DIR}/src/file_utils.cpp
-)
-file(GLOB HEADERS CONFIGURE_DEPENDS "*.h")
-
-set(SRC ${SRC}
-	${UTILS_DIR}/src/string_utils.cpp
-	${UTILS_DIR}/src/file_utils.cpp
-)
-
-# if (HTTP)
-	add_library(http STATIC ${SRC})
-	target_link_libraries(http PUBLIC netlib)
-# endif()
+include(cmake_modules/modules.cmake)
+modules_include_all(cmake_modules)
+setup_module_project()

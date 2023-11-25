@@ -2,7 +2,8 @@
 
 #include <cassert>
 #include <utils/Log.h>
-#include "headers_parser.h"
+#include <utils/string_utils.h>
+#include <http/headers_parser.h>
 
 LOG_PREFIX("[headers_parser]: ");
 LOG_POSTFIX("\n");
@@ -32,6 +33,12 @@ namespace anp
 			{
 				LOG_WARNING("No content length received from the server");
 				//return erc::no_content_length;
+			}
+			auto& te = m_headers.get("Transfer-Encoding");
+			if (!te.empty())
+			{
+				if (te == "chunked")
+					m_transfer_encoding = transfer_encoding_type::chunked;
 			}
 			return erc::done;
 		};
@@ -65,7 +72,7 @@ namespace anp
 					{
 						auto n = h.substr(0, colon_p); // Header name
 						auto v = h.substr(colon_p + 2);
-						m_headers.add({ n, v });
+						m_headers.add({ utils::str_tolower(n), v });
 					}
 					else
 					{

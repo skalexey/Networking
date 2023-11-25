@@ -9,9 +9,10 @@
 #include <utils/profiler.h>
 #include <utils/data_receiver_file.h>
 #include <utils/data_receiver_memory.h>
+#include <http/chunked_data_receiver.h>
 #include <tcp/client.h>
 #include <tcp/ssl/client.h>
-#include "http_client.h"
+#include <http/http_client.h>
 
 LOG_PREFIX("[http_client]: ");
 LOG_POSTFIX("\n");
@@ -126,12 +127,23 @@ namespace anp
 						switch (m_receive_mode)
 						{
 							case receive_mode::file:
-								m_data_receiver = std::make_unique<utils::data::receiver_file<http_data_t>>(m_headers_parser.content_length(), m_file_path);
+								if (m_headers_parser.transfer_encoding() == headers_parser::transfer_encoding_type::chunked)
+									m_data_receiver = std::make_unique<http::chunked_data_receiver<utils::data::receiver_file<http_data_t>>>(m_headers_parser.content_length(), m_file_path);
+								else
+									m_data_receiver = std::make_unique<utils::data::receiver_file<http_data_t>>(m_headers_parser.content_length(), m_file_path);
 								break;
 
 							case receive_mode::memory_full_payload:
-								m_data_receiver = std::make_unique<utils::data::receiver_memory<http_data_t>>(m_headers_parser.content_length());
+							{
+								if (m_headers_parser.transfer_encoding() == headers_parser::transfer_encoding_type::chunked)
+									m_data_receiver = std::make_unique<http::chunked_data_receiver<utils::data::receiver_memory<http_data_t>>>();
+								else
+								{
+									assert(m_headers_parser.content_length() >= 0);
+									m_data_receiver = std::make_unique<utils::data::receiver_memory<http_data_t>>(m_headers_parser.content_length());
+								}
 								break;
+							}
 						}
 					}
 				}
@@ -147,15 +159,24 @@ namespace anp
 						case receive_mode::memory_full_payload:
 						case receive_mode::file:
 							if (m_data_receiver)
-								if (m_data_receiver->receive(payload, payload_size))
-									if (m_data_receiver->full())
-										PROFILE_TIME(return on_receive(
-												m_headers_parser.headers()
-												, m_data_receiver->data()
-												, m_data_receiver->size()
-												, m_headers_parser.status()
-											)
-										);
+							{
+								m_data_receiver->receive(payload, payload_size);
+								auto error = m_data_receiver->error_code();
+								if (error > 0)
+								{
+									LOG_ERROR("Data receiver error: " << error << ": '" << m_data_receiver->error_message() << "'");
+									notify(erc::data_receiver_error);
+									return false;
+								}
+								if (m_data_receiver->full())
+									PROFILE_TIME(return on_receive(
+											m_headers_parser.headers()
+											, m_data_receiver->data()
+											, m_data_receiver->size()
+											, m_headers_parser.status()
+										)
+									);
+							}
 							break;
 					}
 				}

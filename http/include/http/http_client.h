@@ -9,7 +9,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <tcp/fwd.h>
-#include <common/common.h>
+#include <anp/common.h>
 #include <utils/data_receiver_base.h>
 #include "headers_parser.h"
 #include "query.h"
@@ -30,6 +30,7 @@ namespace anp
 			connection_process_error,
 			http_error,
 			parse_headers_error,
+			data_receiver_error,
 			count
 		};
 

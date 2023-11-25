@@ -13,7 +13,7 @@
 #include <utils/file_utils.h>
 #include <utils/datetime.h>
 #include <tcp/client.h>
-#include "authenticator.h"
+#include <http/authenticator.h>
 
 LOG_PREFIX("[authenticator]: ");
 LOG_POSTFIX("\n");

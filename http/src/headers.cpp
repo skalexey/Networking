@@ -3,7 +3,7 @@
 #pragma once
 
 #include <utils/string_utils.h>
-#include "headers.h"
+#include <http/headers.h>
 
 namespace
 {
@@ -33,7 +33,7 @@ namespace anp
 
 	const std::string& headers_t::get(const std::string& name) const
 	{
-		if (auto it = m_data.find(name))
+		if (auto it = m_data.find(utils::str_tolower(name)))
 			return (*it).second.value;
 		return empty_string;
 	}

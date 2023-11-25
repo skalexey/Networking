@@ -4,10 +4,10 @@
 #include <memory>
 #include <thread>
 #include <string>
-#include <common/asio_predefs.h>
+#include <anp/common/asio_predefs.h>
 #include <asio.hpp>
 #include <asio/ts/internet.hpp>
-#include <common/common.h>
+#include <anp/common.h>
 #include <tcp/connection.h>
 
 namespace anp

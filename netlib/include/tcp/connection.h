@@ -6,8 +6,8 @@
 #include <memory>
 #include <vector>
 #include <atomic>
-#include <common/asio_predefs.h>
-#include <common/common.h>
+#include <anp/common/asio_predefs.h>
+#include <anp/common.h>
 #include <tcp/connection_base.h>
 #include <tcp/socket.h>
 #include <asio.hpp>

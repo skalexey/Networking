@@ -8,7 +8,7 @@
 #include <utils/string_utils.h>
 #include <utils/file_utils.h>
 #include <utils/datetime.h>
-#include "uploader.h"
+#include <http/uploader.h>
 
 LOG_PREFIX("[uploader]: ");
 LOG_POSTFIX("\n");

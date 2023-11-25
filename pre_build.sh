@@ -10,6 +10,9 @@ function pre_build()
 	log_info "dir_to_build: '$dir_to_build'"
 	
 	./update_cmake_modules.sh netlib
+	if [ "netlib" != "$dir_to_build" ]; then
+		./update_cmake_modules.sh $dir_to_build
+	fi
 }
 
 pre_build $@
