@@ -40,8 +40,9 @@ namespace anp
 					LOCAL_VERBOSE("\n\n\tRead " << length << " bytes\n");
 					//for (int i = 0; i < length; i++)
 					//	LOCAL_VERBOSE(buf[i]);
-					if (m_on_receive)
-						if (!m_on_receive(buf, length, m_id))
+					auto on_receive = m_on_receive;
+					for (auto&& [_, cb] : on_receive)
+						if (!cb(buf, length, m_id))
 						{
 							if (is_connected())
 								close();
@@ -142,8 +143,18 @@ namespace anp
 			m_on_connect.clear();
 		}
 
-		void connection_base::send(const std::string& msg)
+		void connection_base::send(const std::string& msg, const response_cb& on_response)
 		{
+			if (on_response)
+			{
+				auto subscriber = std::make_shared<bool>();
+				subscribe_on_receive(subscriber.get(), [&, self = this, on_response, subscriber](const std::vector<char>& buf, std::size_t length, int id) {
+					auto cb = on_response;
+					self->unsubscribe_from_receive(subscriber.get());
+					cb(buf);
+					return true;
+				});
+			}
 			asio::post(m_ctx, [&, msg] {
 				if (!is_connected())
 				{
@@ -154,17 +165,13 @@ namespace anp
 				socket().async_write(msg.c_str(), msg.size(), [&](std::error_code ec, std::size_t wrc) {
 					LOCAL_VERBOSE("Written " << wrc << " bytes");
 					read_async();
-					});
 				});
-		}
-
-		void connection_base::set_on_receive(const data_cb& cb)
-		{
-			m_on_receive = cb;
+			});
 		}
 
 		void connection_base::add_on_connect(const error_cb& cb)
 		{
+			assert(cb);
 			m_on_connect.push_back(cb);
 		}
 

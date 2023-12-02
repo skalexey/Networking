@@ -4,7 +4,6 @@ project(netlib C CXX)
 
 macro(setup_module)
 	module_message("Setting up module: ${MODULE_NAME}")
-
 	# Boost dependency
 	set(BOOST_PATH ${DEPS}/boost_1_81_0)
 	module_message("Boost path: '${BOOST_PATH}'")
@@ -33,7 +32,11 @@ macro(setup_module)
 	# Group sources for IDE
 	set_headers()
 	GROUP_SRC("${HEADERS}" "${CMAKE_CURRENT_SOURCE_DIR}/include")
-	add_src(${HEADERS}) # Add headers as sources to make them visible in IDE
+	# Add headers as sources to make them visible in IDE
+	add_src(${HEADERS})
+	file(GLOB_RECURSE PARENT_DIR_HEADERS "${PARENT_DIR}/include/*")
+	module_message("PARENT_DIR_HEADERS: ${PARENT_DIR_HEADERS}")
+	add_src(${PARENT_DIR_HEADERS})
 
 	# add library
 	module_add_library()

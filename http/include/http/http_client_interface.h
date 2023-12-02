@@ -9,9 +9,9 @@
 #include <functional>
 #include <string>
 #include <utils/filesystem.h>
+#include <tcp/endpoint.h>
 #include "query.h"
 #include "headers.h"
-#include <tcp/endpoint.h>
 
 namespace anp
 {
@@ -96,7 +96,7 @@ namespace anp
 			https
 		};
 		virtual void reset(client_type c = client_type::http) = 0;
-
+				
 	protected:
 		virtual void on_before_notify(int ec) {};
 		virtual void on_notify(int ec) {};

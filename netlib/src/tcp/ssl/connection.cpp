@@ -26,7 +26,7 @@ namespace anp
 			}
 
 			ssl::connection::connection(asio::io_context& io_ctx, asio::ip::tcp::socket soc, int id)
-				: base(io_ctx, std::move(soc), id)
+				: base(io_ctx, id)
 				, m_ssl_ctx(asio::ssl::context::sslv23)
 				, m_socket(std::move(soc), m_ssl_ctx)
 			{

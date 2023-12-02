@@ -83,7 +83,7 @@ int main()
 	}
 	catch (...)
 	{
-		std::cout << "Exception catched\n";
+		std::cout << "Exception caught\n";
 	}
 	return 0;
 }

@@ -27,7 +27,6 @@ namespace anp
 {
 	http_client::http_client()
 		: m_cv_ul(m_cv_mtx)
-		, m_client(std::make_unique<tcp::client>())
 	{
 	}
 
@@ -71,8 +70,8 @@ namespace anp
 		, const http_response_cb& on_receive
 	)
 	{
-		auto c = endpoint.port == 443 ? client_type::https : client_type::http;
-		reset(c);
+		auto type = endpoint.port == 443 ? client_type::https : client_type::http;
+		reset(type);
 
 		LOG_VERBOSE("request: " << request);
 

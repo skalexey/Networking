@@ -1,7 +1,4 @@
-﻿// connection.h : Include file for standard system include files,
-// or project specific include files.
-
-#pragma once
+﻿#pragma once
 
 #include <memory>
 #include <tcp/connection.h>
@@ -13,7 +10,7 @@ namespace anp
 	{
 		namespace ssl
 		{
-			using ssl_connection_base = tcp::connection;
+			using ssl_connection_base = tcp::connection_base;
 			class connection : public ssl_connection_base
 			{
 				friend class server;

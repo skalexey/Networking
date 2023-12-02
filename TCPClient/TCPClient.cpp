@@ -7,6 +7,9 @@
 #include <tcp/ssl/client.h>
 #include <utils/string_utils.h>
 #include "TCPClient.h"
+#include <utils/Log.h>
+LOG_POSTFIX("\n");
+LOG_PREFIX("[TCPClient]: ");
 
 void init_client(anp::tcp::client_base& client)
 {
@@ -21,7 +24,7 @@ void init_client(anp::tcp::client_base& client)
 
 int main()
 {
-	std::cout << "TCPClient" << std::endl;
+	LOG("Launch");
 	// Create a client
 	std::unique_ptr<anp::tcp::client_base> c = std::make_unique<anp::tcp::client>();
 
@@ -72,8 +75,8 @@ int main()
 				std::cin >> path;
 				std::cout << "\n";
 				c->connect(host, port, [&c, path, host](const std::error_code& ec) {
-					std::cout << "Connected\n";
-					std::cout << "Send request\n";
+					LOG("Connected");
+					LOG("Send request");
 					c->send(SSTREAM("GET " << path << " HTTP/1.1\r\n"
 						"Host: " << host << "\r\n"
 						"Connection: close\r\n\r\n")
@@ -87,7 +90,7 @@ int main()
 				std::cout << "Message: ";
 				std::cin >> msg;
 				c->send(msg);
-				std::cout << "Sent '" << msg << "'\n";
+				LOG("Sent '" << msg << "'");
 			}
 			else if (msg == "ssl")
 			{
@@ -104,6 +107,9 @@ int main()
 					c->send(SSTREAM("GET /v/a.php?u=skalexey&t=33 HTTP/1.1\r\n"
 						"Host: srv.vllibrary.net\r\n"
 						"Connection: close\r\n\r\n")
+						, [&c](const std::vector<char>& response) {
+							LOG("Response received");
+						}
 					);
 				});
 			}
@@ -111,7 +117,7 @@ int main()
 	}
 	catch (...)
 	{
-		std::cout << "Exception catched\n";
+		LOG("Exception caught");
 	}
 
 	return 0;

@@ -27,7 +27,7 @@ namespace anp
 
 		protected:
 			void WaitClientConnection();
-			virtual bool OnClientConnect(const connection_ptr& connection);
+			virtual bool on_client_connect(const connection_ptr& connection);
 
 		private:
 			std::unique_ptr<asio::io_context> m_ctx;

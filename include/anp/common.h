@@ -14,6 +14,7 @@ namespace anp
 		, std::size_t				// Size
 		, int						// Id
 	)>;
+	using response_cb = std::function<void(const std::vector<char>&)>;
 
 	using error_cb = std::function<void(const std::error_code&)>;
 	using asio_operation_cb = error_cb;

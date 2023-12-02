@@ -54,11 +54,10 @@ namespace anp
 		{
 			LOG_DEBUG("client_base::~client_base");
 			if (is_connected())
-				m_connection->close();
+				disconnect();
 			assert(std::this_thread::get_id() != m_ctx_thread_id);
 			if (m_thr_ctx.joinable())
 				m_thr_ctx.join();
-			m_ctx.reset();
 		}
 
 		bool client_base::connect(const std::string& host, int port, const anp::error_cb& on_connect)
@@ -92,8 +91,10 @@ namespace anp
 			try
 			{
 				m_connection = make_connection();
-				m_connection->set_on_receive(m_on_receive);
-				m_connection->add_on_connect(m_on_connect);
+				if (m_on_receive)
+					m_connection->subscribe_on_receive(this, m_on_receive);
+				if (m_on_connect)
+					m_connection->add_on_connect(m_on_connect);
 				m_connection->set_on_close(std::bind(&client_base::on_connection_close, this));
 				LOCAL_VERBOSE("	Connect the socket");
 				m_connection->connect({host, port}, [self = this, on_connect](const std::error_code& ec) {
@@ -169,8 +170,11 @@ namespace anp
 					LOG_ERROR("Error while disconnecting: " << e.what());
 				}
 
+				LOG_VERBOSE("Reset the idle work");
 				m_idle_work.reset();
-				m_connection.reset(nullptr);
+				LOG_VERBOSE("Reset the connection");
+				m_connection.reset();
+				LOG_VERBOSE("Connection has been reset");
 				// TODO: check if everything is ok in the ELSE case of this IF
 				if (std::this_thread::get_id() != m_ctx_thread_id)
 				{
@@ -197,7 +201,7 @@ namespace anp
 			return false;
 		}
 
-		void client_base::send(const std::string& msg)
+		void client_base::send(const std::string& msg, const response_cb& on_response)
 		{
 			LOCAL_DEBUG("Send data: \n'" << msg << "'\n\n");
 
@@ -206,14 +210,15 @@ namespace anp
 				LOCAL_WARNING("send called while disconnected");
 				return;
 			}
-			m_connection->send(msg);
+			m_connection->send(msg, on_response);
 		}
 
 		void client_base::set_on_receive(const data_cb& cb)
 		{
 			m_on_receive = cb;
-			if (m_connection)
-				m_connection->set_on_receive(m_on_receive);
+			if (m_connection) {
+				m_connection->subscribe_on_receive(this, m_on_receive);
+			}
 		}
 
 		void client_base::add_on_connect(const error_cb& cb)

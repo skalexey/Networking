@@ -15,7 +15,7 @@ namespace anp
 			class client : public tcp::client_base
 			{
 			protected:
-				std::unique_ptr<anp::tcp::connection> make_connection() override {
+				std::unique_ptr<anp::tcp::connection_base> make_connection() override {
 					return std::make_unique<anp::tcp::ssl::connection>(io_context());
 				}
 			};

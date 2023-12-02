@@ -33,19 +33,20 @@ namespace anp
 				return;
 			}
 			m_acceptor->async_accept(
-				[this](std::error_code ec, asio::ip::tcp::socket socket)
+				[self = this](std::error_code ec, asio::ip::tcp::socket socket)
 				{
 					if (!ec)
 					{
 						LOCAL_VERBOSE("[SERVER] New Connection: " << socket.remote_endpoint());
 
 						connection_ptr c =
-							std::make_shared<connection>(*m_ctx, std::move(socket), m_conn_id++);
-						c->set_on_receive(m_on_receive);
+							std::make_shared<connection>(*self->m_ctx, std::move(socket), self->m_conn_id++);
+						if (self->m_on_receive)
+							c->subscribe_on_receive(self, self->m_on_receive);
 						// Give the user server a chance to deny connection
-						if (OnClientConnect(c))
+						if (self->on_client_connect(c))
 						{
-							m_connections.emplace(c->get_id(), c);
+							self->m_connections.emplace(c->get_id(), c);
 							c->read_async();
 							LOCAL_VERBOSE("[" << c->get_id() << "] Connection Approved");
 						}
@@ -59,11 +60,11 @@ namespace anp
 						LOG_WARNING("New Connection Error: '" << ec.message() << "'");
 					}
 
-					WaitClientConnection();
+					self->WaitClientConnection();
 				});
 		}
 
-		bool anp::tcp::server::OnClientConnect(const connection_ptr& connection)
+		bool anp::tcp::server::on_client_connect(const connection_ptr& connection)
 		{
 			return true;
 		}

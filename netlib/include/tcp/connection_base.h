@@ -22,14 +22,19 @@ namespace anp
 			using soc_t = socket_t::soc_t;
 			connection_base(asio::io_context& io_ctx);
 			connection_base(asio::io_context& io_ctx, int id);
-			~connection_base();
+			virtual ~connection_base();
 			bool is_connected() const {
 				return get_socket().is_open();
 			};
 			void connect(const tcp::endpoint_t& ep, const asio_operation_cb& on_result = nullptr);
 			void close();
-			void send(const std::string& msg);
-			void set_on_receive(const data_cb& cb);
+			void send(const std::string& msg, const response_cb& on_response = nullptr);
+			void subscribe_on_receive(void* subscriber, const data_cb& cb) {
+				m_on_receive[subscriber] = cb;
+			}
+			bool unsubscribe_from_receive(void* subscriber) {
+				return m_on_receive.erase(subscriber) > 0;
+			}
 			void add_on_connect(const error_cb& cb);
 			void set_on_close(const utils::void_cb& cb);
 			int get_id() { return m_id; }
@@ -46,7 +51,7 @@ namespace anp
 
 		private:
 			asio::io_context& m_ctx;
-			data_cb m_on_receive;
+			std::unordered_map<void*, data_cb> m_on_receive;
 			std::vector<error_cb> m_on_connect;
 			utils::void_cb m_on_close;
 			int m_id = -1;
