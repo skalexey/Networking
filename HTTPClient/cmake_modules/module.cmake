@@ -9,7 +9,7 @@ endmacro(set_module_name)
 
 macro(setup_module_includes)
 	set(${MODULE_NAME}_INCLUDES
-		${CUSTOM_INCLUDES}
+		${${MODULE_NAME}_CUSTOM_INCLUDES}
 		${INCLUDES}
 		"${CMAKE_CURRENT_SOURCE_DIR}/include"
 	)

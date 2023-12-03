@@ -5,9 +5,14 @@ project(HTTPClient C CXX)
 macro(setup_module)
 	module_message("Setting up module: ${MODULE_NAME}")
 	module_message("Parent dir: ${PARENT_DIR}")
+	
+	# HTTP dependency
 	set(HTTP_DIR "${PARENT_DIR}/http")
 	module_message("HTTPClient HTTP_DIR: '${HTTP_DIR}'")
 	add_dependency_module(${HTTP_DIR} http)
+	# DMBCore dependency
+	add_dependency_module(${DEPS}/DataModelBuilder/Core DMBCore)
+
 	module_add_includes(
 		${PARENT_DIR}/include
 	)

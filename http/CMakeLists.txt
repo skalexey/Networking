@@ -4,7 +4,6 @@ project(http C CXX)
 
 macro(setup_module)
 	module_message("Setting up module: ${MODULE_NAME}")
-
 	module_message("Parent dir: ${PARENT_DIR}")
 
 	set(NETLIB_DIR "${PARENT_DIR}/netlib")
@@ -13,11 +12,6 @@ macro(setup_module)
 
 	# set(http_INCLUDES ${SOME_INCLUDES})
 
-	set_headers()
-	GROUP_SRC("${HEADERS}" "${CMAKE_CURRENT_SOURCE_DIR}/include")
-	add_src(${HEADERS})
-
-	file(GLOB SRC CONFIGURE_DEPENDS "src/*")
 	add_src( 
 		${UTILS_DIR}/src/string_utils.cpp
 		${UTILS_DIR}/src/file_utils.cpp
@@ -34,9 +28,8 @@ macro(setup_module)
 	)
 
 	# Group sources for IDE
-	set_headers()
-	GROUP_SRC("${HEADERS}" "${CMAKE_CURRENT_SOURCE_DIR}/include")
-	add_src(${HEADERS}) # Add headers as sources to make them visible in IDE
+	group_headers()
+	add_headers_to_sources()
 
 	# add library
 	module_add_library()
