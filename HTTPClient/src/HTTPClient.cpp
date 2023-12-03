@@ -2,23 +2,49 @@
 #include <http/http_client.h>
 #include <utils/string_utils.h>
 #include "HTTPClient.h"
+#include <DMBCore.h>
 #include <utils/Log.h>
 LOG_POSTFIX("\n");
 LOG_PREFIX("[HTTPClient]: ");
 
+namespace
+{
+	anp::tcp::endpoint_t ep{ "google.com", 80 };
+
+	dmb::Model cfg_model;
+	fs::path cfg_path = "config.json";
+
+	vl::Object& get_cfg_data()
+	{
+		if (!cfg_model.IsLoaded())
+			if (!cfg_model.Load(cfg_path.string()))
+			{
+				auto& data = cfg_model.GetContent().GetData();
+				data.Set("host", ep.host);
+				data.Set("port", ep.port);
+				data.Set("initial_command", "");
+				LOG_WARNING("There is no config in " << cfg_path.string() << ". I will create it for you.");
+				if (!cfg_model.Store(cfg_path.string(), { true }))
+					LOG_ERROR("Can't create config file");
+			}
+		return cfg_model.GetContent().GetData();
+	}
+}
+
 int main()
 {
 	LOG("Launch");
+	auto& cfg = get_cfg_data();
+
 	anp::http_client c;
 	// Connect
-	std::string host = "srv.vllibrary.net";
-	int port = 443;
-	anp::tcp::endpoint_t ep{ host, port };
-
+	std::string host = cfg["host"].AsString().Val();
+	int port = cfg["port"].AsNumber().Val();
+	ep = {host, port};
 	// Setup the input logic
 	try
 	{
-		std::string msg;// = "ssltest";
+		std::string msg = cfg["initial_command"].AsString().Val();
 		while (true)
 		{
 			std::cout << " > ";
