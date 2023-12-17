@@ -21,6 +21,9 @@ namespace anp
 			socket(soc_t&& soc) : m_soc(std::move(soc)) {}
 			socket(asio::io_context& ctx) : m_soc(ctx) {}
 			const soc_t& get_soc() const override { return m_soc; }
+			void close() override {
+				soc().shutdown(asio::ip::tcp::socket::shutdown_both);
+			}
 
 		private:
 			soc_t m_soc;

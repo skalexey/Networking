@@ -23,9 +23,6 @@ namespace anp
 			void async_write(const buffer_value_type* begin, std::size_t size, const base::response_cb_t& cb) override {
 				asio::async_write(soc(), asio::buffer(begin, size), cb);
 			}
-			void close() override {
-				soc().close();
-			}
 			bool is_open() const override {
 				return get_soc().is_open();
 			}
