@@ -65,7 +65,7 @@ namespace anp
 				reset(utils::get_n_pack_arg<0, Args...>(std::forward<Args>(args)...));
 			}
 
-			void receive_impl(const data_element_t* data, const std::size_t& size) override {
+			std::size_t receive_impl(const data_element_t* data, const std::size_t& size) override {
 				assert(m_chunk_size != 0);
 				const data_element_t* cur = data;
 				const data_element_t* end = data + size;
@@ -80,21 +80,23 @@ namespace anp
 							cur = std::find(cur, end, '\r');
 							auto _ = cycle_start_pos;
 							if (!receive_control_data(_, cur - cycle_start_pos))
-								return;
+								return cur - data;
 							if (cur != end)
 							{
 								// The chunk size received
 								int cs = 0;
-								sscanf(m_control_data_receiver.data(), "%x", &cs);
+								std::string fmt = "%" + std::to_string(m_control_data_receiver.size()) + "x";
+								auto scanf_result = sscanf(m_control_data_receiver.data(), fmt.c_str(), &cs);
+								assert(scanf_result > 0);
 								m_chunk_size = cs;
 								m_control_data_receiver.reset(2); // For the size terminator
 							}
 							else // The data ended on \r. Wait for the next receive call
-								return;
+								return cur - data;
 						}
 						// Receiving the chunk header terminator
 						if (!receive_control_data(cur, 2))
-							return;
+							return cur - data;
 						if (!m_control_data_receiver.empty() && strncmp(m_control_data_receiver.data(), "\r\n", 2) == 0)
 						{
 							m_control_data_receiver.reset(2); // For the chunk terminator
@@ -105,7 +107,7 @@ namespace anp
 					auto data_amount_before = this->size();
 					m_final_receiver.receive(cur, size - (cur - data)); // It will receive no more than the current chunk
 					if (error_code() != 0)
-						return;
+						return cur - data;
 					auto received_data_amount = this->size() - data_amount_before;
 					assert(received_data_amount >= 0);
 					cur += received_data_amount;
@@ -113,7 +115,7 @@ namespace anp
 					{
 						// Receiving the chunk data terminator
 						if (!receive_control_data(cur, 2))
-							return;
+							return cur - data;
 						if (m_chunk_size > 0)
 							if (!m_control_data_receiver.empty() && strncmp(m_control_data_receiver.data(), "\r\n", 2) == 0)
 							{
@@ -123,6 +125,7 @@ namespace anp
 							}
 					}
 				}
+				return cur - data;
 			}
 			bool full() const override {
 				return m_chunk_size == 0 && m_final_receiver.full();
