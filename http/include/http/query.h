@@ -29,7 +29,7 @@ namespace anp
 		std::string path;
 		values_t values;
 		std::string method;
-		headers_t headers;
+		http::headers_t headers;
 		std::string body;
 		
 		std::string uri() const;

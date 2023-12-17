@@ -34,7 +34,7 @@ namespace anp
 		if (query.method.empty())
 			query.method = "GET";
 		return this->query(ep, query, [this, on_response](
-			const headers_t& headers
+			const http::headers_t& headers
 			, const char* data
 			, std::size_t sz
 			, int status
@@ -62,7 +62,7 @@ namespace anp
 		if (query.method.empty())
 			query.method = "GET";
 		query_async(ep, query, [this, on_result, on_response](
-			const headers_t& headers
+			const http::headers_t& headers
 			, const char* data
 			, std::size_t sz
 			, int status

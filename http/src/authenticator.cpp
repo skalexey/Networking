@@ -37,7 +37,7 @@ namespace anp
 		q.path = path;
 		q.method = "GET";
 		query_async(ep, q, [self = this, on_result](
-				const headers_t&
+				const http::headers_t&
 				, const http_data_t* data
 				, std::size_t sz
 				, int http_status
@@ -45,7 +45,7 @@ namespace anp
 			{
 				if (http_status != 200)
 				{
-					on_result(self->notify(http_client::erc::http_error));
+					on_result(self->notify(http_client_base::erc::http_error));
 					return false;
 				}
 				std::string_view s(data, sz);
@@ -54,7 +54,7 @@ namespace anp
 					on_result(self->notify(erc::auth_error));
 					return false;
 				}
-				on_result(self->notify(http_client::erc::no_error));
+				on_result(self->notify(http_client_base::erc::no_error));
 				return true;
 			}
 		);

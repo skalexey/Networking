@@ -16,7 +16,7 @@ namespace anp
 	public:
 		enum erc : int
 		{
-			parse_date_error = http_client::erc::count,
+			parse_date_error = http_client::erc::erc_count,
 			no_date,
 			file_error,
 			store_download_error,

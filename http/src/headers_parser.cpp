@@ -111,7 +111,7 @@ namespace anp
 		} while (true);
 
 		assert(false && "Should not be here");
-		return erc::count;
+		return erc::erc_count;
 	}
 
 	void headers_parser::reset()

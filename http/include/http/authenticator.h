@@ -24,7 +24,7 @@ namespace anp
 	public:
 		enum erc : int
 		{
-			auth_error = http_client::erc::count,
+			auth_error = http_client::erc::erc_count,
 		};
 
 		int auth(const tcp::endpoint_t& ep, const std::string& path, const credentials& credentials);

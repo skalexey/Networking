@@ -10,14 +10,14 @@
 #include <string>
 #include <utils/filesystem.h>
 #include <tcp/endpoint.h>
-#include "query.h"
-#include "headers.h"
+#include <http/query.h>
+#include <http/headers.h>
 
 namespace anp
 {
 	using http_data_t = char;
 	using http_response_cb = std::function<bool(
-		const headers_t&		// HTTP Headers
+		const http::headers_t&		// HTTP Headers
 		, const http_data_t*	// Buffer
 		, std::size_t			// Size
 		, int					// HTTP Status
@@ -28,10 +28,11 @@ namespace anp
 	public:
 		enum receive_mode : int
 		{
-			memory_full_payload,
 			memory_tcp_packet,
-			file
+			receive_mode_count
 		};
+
+		virtual ~http_client_interface() = default;
 		
 		virtual int query(
 			const tcp::endpoint_t& endpoint,
@@ -65,7 +66,7 @@ namespace anp
 			const std::string& method,
 			const std::string& query,
 			const http_response_cb& on_receive = http_response_cb(),
-			const headers_t& m_headers = headers_t(),
+			const http::headers_t& m_headers = http::headers_t(),
 			const std::string& body = ""
 		);
 
@@ -74,7 +75,7 @@ namespace anp
 			const std::string& method,
 			const std::string& query,
 			const http_response_cb& on_receive = http_response_cb(),
-			const headers_t& m_headers = headers_t(),
+			const http::headers_t& m_headers = http::headers_t(),
 			const std::string& body = ""
 		) = 0;
 		// End of Alternative interface
@@ -84,7 +85,7 @@ namespace anp
 		virtual int notify(int ec) = 0;
 
 		virtual void set_receive_file(const fs::path& file_path) = 0;
-		virtual void set_receive_mode(receive_mode mode) = 0;
+		virtual void set_receive_mode(int mode) = 0;
 
 		virtual const fs::path& get_file_path() const = 0;
 

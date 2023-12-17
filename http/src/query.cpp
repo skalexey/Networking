@@ -19,6 +19,10 @@ namespace anp
 			uri += "?";
 			uri += values.to_string();
 		}
+		else
+		{
+			uri = "/";
+		}
 		return uri;
 	}
 

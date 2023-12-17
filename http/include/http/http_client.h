@@ -3,62 +3,36 @@
 #pragma once
 
 #include <memory>
-#include <atomic>
 #include <string>
 #include <vector>
-#include <mutex>
-#include <condition_variable>
 #include <tcp/fwd.h>
 #include <anp/common.h>
 #include <utils/data_receiver_base.h>
-#include "headers_parser.h"
-#include "query.h"
-#include "http_client_interface.h"
+#include <http/headers_parser.h>
+#include <http/http_client_base.h>
 
 namespace anp
 {
-	class http_client : public virtual http_client_interface
+	class http_client : public http_client_base
 	{
-		using base = http_client_interface;
+		using base = http_client_base;
 
 	public:
 		enum erc : int
 		{
-			unknown = -1,
-			no_error = 0,
-			connection_error,
-			connection_process_error,
-			http_error,
-			parse_headers_error,
+			parse_headers_error = int(http_client_base::erc::erc_count),
 			data_receiver_error,
-			count
+			erc_count
 		};
 
-		http_client();
 		~http_client();
-
-		int request(
-			const tcp::endpoint_t& endpoint,
-			const std::string& request,
-			const http_response_cb& on_receive
-		) override;
-
-		void request_async(
-			const tcp::endpoint_t& endpoint,
-			const std::string& request,
-			const http_response_cb& on_receive
-		) override;
-
-		int errcode() override {
-			return m_error_code.load();
-		}
-
+		
 		void query_async(
 			const tcp::endpoint_t& endpoint,
 			const std::string& method,
 			const std::string& query,
 			const http_response_cb& on_receive = http_response_cb(),
-			const headers_t& m_headers = headers_t(),
+			const http::headers_t& m_headers = http::headers_t(),
 			const std::string& body = ""
 		) override;
 
@@ -71,40 +45,30 @@ namespace anp
 		) override {
 			base::query_async(endpoint, query, on_receive);
 		}
-		
-		void wait() override;
 
-		int notify(int ec) override;
-
-		void set_receive_file(const fs::path& file_path) override;
-
-		void set_receive_mode(receive_mode mode) override {
-			m_receive_mode = mode;
+	// http_client_base overrides
+	protected:
+		bool on_packet_receive(const std::vector<http_data_t>& data, std::size_t sz, int id) override;
+		const http::headers_t& get_headers() const override {
+			return m_headers_parser.headers();
+		}
+		int get_status() const override {
+			return m_headers_parser.status();
 		}
 
-		const fs::path& get_file_path() const override {
-			return m_file_path;
-		}
-
-		bool remove_received_file();
-
+	// http_client own interface
 	protected:
 		std::string parse_header(const std::string& response, const std::string& header);
 
+	// http_client_interface overrides
 	protected:
 		void reset(client_type c = client_type::http) override;
 		
+	// Data
 	protected:
 		std::unique_ptr<utils::data::receiver_base<http_data_t>> m_data_receiver;
 
 	private:
-		std::atomic<int> m_error_code = erc::unknown;
-		std::mutex m_cv_mtx;
-		std::unique_lock<std::mutex> m_cv_ul;
-		std::condition_variable m_cv;
-		std::unique_ptr<anp::tcp::client_base> m_client;
 		headers_parser m_headers_parser;
-		receive_mode m_receive_mode = receive_mode::memory_full_payload;
-		fs::path m_file_path;
 	};
 }

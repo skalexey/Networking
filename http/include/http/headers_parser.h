@@ -6,7 +6,7 @@
 #include <string>
 #include <optional>
 #include <string_view>
-#include "headers.h"
+#include <http/headers.h>
 
 namespace anp
 {
@@ -23,7 +23,7 @@ namespace anp
 			status_parse_error,
 			no_content_length,
 			parse_size_error,
-			count
+			erc_count
 		};
 
 		enum transfer_encoding_type {
@@ -38,12 +38,12 @@ namespace anp
 		std::size_t content_length() const { return m_content_length.has_value() ? m_content_length.value() : -1; }
 		transfer_encoding_type transfer_encoding() const { return m_transfer_encoding; }
 		std::size_t cursor() const { return m_cursor; }
-		const headers_t& headers() const { return m_headers; }
+		const http::headers_t& headers() const { return m_headers; }
 		void reset();
 
 	private:
 		int m_error_code = 0;
-		headers_t m_headers;
+		http::headers_t m_headers;
 		std::optional<std::size_t> m_content_length;
 		int m_status = -1;
 		std::string m_last_data;

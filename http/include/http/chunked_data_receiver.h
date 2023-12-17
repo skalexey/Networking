@@ -37,123 +37,126 @@
 #include <utils/macros.h>
 #include <utils/parameters.h>
 
-namespace http
+namespace anp
 {
-	// --- receiver_memory ---
-	template <typename Final_receiver_t>
-	class chunked_data_receiver : public utils::data::receiver_base<Final_receiver_t::template data_element_t>
+	namespace http
 	{
-	public:
-		using base = utils::data::receiver_base<Final_receiver_t::template data_element_t>;
-		using data_t = Final_receiver_t::template data_t;
-		using data_element_t = Final_receiver_t::template data_element_t;
-		enum chunked_data_receiver_error : int
+		// --- receiver_memory ---
+		template <typename Final_receiver_t>
+		class chunked_data_receiver : public utils::data::receiver_base<Final_receiver_t::template data_element_t>
 		{
-			control_block_partial_receive = Final_receiver_t::count,
-			count,
-		};
-	public:
-		chunked_data_receiver() {
-			reset(0);
-		}
-		template <typename... Args>
-		chunked_data_receiver(Args&&... args)
-			: m_final_receiver(std::forward<Args>(args)...)
-		{
-			reset(utils::get_n_pack_arg<0, Args...>(std::forward<Args>(args)...));
-		}
-
-		void receive_impl(const data_element_t* data, const std::size_t& size) override {
-			assert(m_chunk_size != 0);
-			const data_element_t* cur = data;
-			const data_element_t* end = data + size;
-			while(cur < data + size)
+		public:
+			using base = utils::data::receiver_base<Final_receiver_t::template data_element_t>;
+			using data_t = Final_receiver_t::template data_t;
+			using data_element_t = Final_receiver_t::template data_element_t;
+			enum chunked_data_receiver_error : int
 			{
-				if (m_final_receiver.full())
+				control_block_partial_receive = Final_receiver_t::count,
+				count,
+			};
+		public:
+			chunked_data_receiver() {
+				reset(0);
+			}
+			template <typename... Args>
+			chunked_data_receiver(Args&&... args)
+				: m_final_receiver(std::forward<Args>(args)...)
+			{
+				reset(utils::get_n_pack_arg<0, Args...>(std::forward<Args>(args)...));
+			}
+
+			void receive_impl(const data_element_t* data, const std::size_t& size) override {
+				assert(m_chunk_size != 0);
+				const data_element_t* cur = data;
+				const data_element_t* end = data + size;
+				while (cur < data + size)
 				{
-					// Receiveing the chunk size
-					if (!m_chunk_size.has_value())
+					if (m_final_receiver.full())
 					{
-						const data_element_t* cycle_start_pos = cur;
-						cur = std::find(cur, end, '\r');
-						auto _ = cycle_start_pos;
-						if (!receive_control_data(_, cur - cycle_start_pos))
-							return;
-						if (cur != end)
+						// Receiveing the chunk size
+						if (!m_chunk_size.has_value())
 						{
-							// The chunk size received
-							int cs = 0;
-							sscanf(m_control_data_receiver.data(), "%x", &cs);
-							m_chunk_size = cs;
-							m_control_data_receiver.reset(2); // For the size terminator
+							const data_element_t* cycle_start_pos = cur;
+							cur = std::find(cur, end, '\r');
+							auto _ = cycle_start_pos;
+							if (!receive_control_data(_, cur - cycle_start_pos))
+								return;
+							if (cur != end)
+							{
+								// The chunk size received
+								int cs = 0;
+								sscanf(m_control_data_receiver.data(), "%x", &cs);
+								m_chunk_size = cs;
+								m_control_data_receiver.reset(2); // For the size terminator
+							}
+							else // The data ended on \r. Wait for the next receive call
+								return;
 						}
-						else // The data ended on \r. Wait for the next receive call
+						// Receiving the chunk header terminator
+						if (!receive_control_data(cur, 2))
 							return;
-					}
-					// Receiving the chunk header terminator
-					if (!receive_control_data(cur, 2))
-						return;
-					if (!m_control_data_receiver.empty() && strncmp(m_control_data_receiver.data(), "\r\n", 2) == 0)
-					{
-						m_control_data_receiver.reset(2); // For the chunk terminator
-						m_final_receiver.grow(m_chunk_size.value());
-					}
-				}
-				// Receiveing the data
-				auto data_amount_before = this->size();
-				m_final_receiver.receive(cur, size - (cur - data)); // It will receive no more than the current chunk
-				if (error_code() != 0)
-					return;
-				auto received_data_amount = this->size() - data_amount_before;
-				assert(received_data_amount >= 0);
-				cur += received_data_amount;
-				if (m_final_receiver.full())
-				{
-					// Receiving the chunk data terminator
-					if (!receive_control_data(cur, 2))
-						return;
-					if (m_chunk_size > 0)
 						if (!m_control_data_receiver.empty() && strncmp(m_control_data_receiver.data(), "\r\n", 2) == 0)
 						{
-							m_chunk_size.reset();
-							m_control_data_receiver.reset();
-							// The chunk received
+							m_control_data_receiver.reset(2); // For the chunk terminator
+							m_final_receiver.grow(m_chunk_size.value());
 						}
+					}
+					// Receiveing the data
+					auto data_amount_before = this->size();
+					m_final_receiver.receive(cur, size - (cur - data)); // It will receive no more than the current chunk
+					if (error_code() != 0)
+						return;
+					auto received_data_amount = this->size() - data_amount_before;
+					assert(received_data_amount >= 0);
+					cur += received_data_amount;
+					if (m_final_receiver.full())
+					{
+						// Receiving the chunk data terminator
+						if (!receive_control_data(cur, 2))
+							return;
+						if (m_chunk_size > 0)
+							if (!m_control_data_receiver.empty() && strncmp(m_control_data_receiver.data(), "\r\n", 2) == 0)
+							{
+								m_chunk_size.reset();
+								m_control_data_receiver.reset();
+								// The chunk received
+							}
+					}
 				}
 			}
-		}
-		bool full() const override {
-			return m_chunk_size == 0 && m_final_receiver.full();
-		}
-		const data_element_t* data() const override {
-			return m_final_receiver.data();
-		}
-		size_t size() const override {
-			return m_final_receiver.size();
-		}
-		std::size_t target_size() const override {
-			return m_final_receiver.target_size();
-		}
-		void reset(const std::size_t& size = 0) override {
-			base::reset(size);
-			m_final_receiver.reset(size);
-			m_control_data_receiver.reset();
-			m_chunk_size.reset();
-		}
-		void grow(const std::size_t& size) override {
-			m_final_receiver.grow(size);
-		}
-		
-	protected:
-		bool receive_control_data(const data_element_t*& cur, const std::size_t& size) {
-			auto received = m_control_data_receiver.receive(cur, size);
-			cur += received;
-			return error_code() == 0 && (m_control_data_receiver.full() || m_control_data_receiver.is_unlimited());
-		}
+			bool full() const override {
+				return m_chunk_size == 0 && m_final_receiver.full();
+			}
+			const data_element_t* data() const override {
+				return m_final_receiver.data();
+			}
+			size_t size() const override {
+				return m_final_receiver.size();
+			}
+			std::size_t target_size() const override {
+				return m_final_receiver.target_size();
+			}
+			void reset(const std::size_t& size = 0) override {
+				base::reset(size);
+				m_final_receiver.reset(size);
+				m_control_data_receiver.reset();
+				m_chunk_size.reset();
+			}
+			void grow(const std::size_t& size) override {
+				m_final_receiver.grow(size);
+			}
 
-	private:
-		Final_receiver_t m_final_receiver;
-		utils::data::receiver_memory<data_element_t> m_control_data_receiver;
-		std::optional<std::size_t> m_chunk_size;
-	};
+		protected:
+			bool receive_control_data(const data_element_t*& cur, const std::size_t& size) {
+				auto received = m_control_data_receiver.receive(cur, size);
+				cur += received;
+				return error_code() == 0 && (m_control_data_receiver.full() || m_control_data_receiver.is_unlimited());
+			}
+
+		private:
+			Final_receiver_t m_final_receiver;
+			utils::data::receiver_memory<data_element_t> m_control_data_receiver;
+			std::optional<std::size_t> m_chunk_size;
+		};
+	}
 }

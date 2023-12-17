@@ -41,7 +41,7 @@ namespace anp
 			const std::string& method,
 			const std::string& query,
 			const http_response_cb& on_receive = http_response_cb(),
-			const headers_t& m_headers = headers_t(),
+			const http::headers_t& m_headers = http::headers_t(),
 			const std::string& body = ""
 		) override
 		{
@@ -66,7 +66,7 @@ namespace anp
 			m_object->set_receive_file(file_path);
 		}
 
-		void set_receive_mode(receive_mode mode) override
+		void set_receive_mode(int mode) override
 		{
 			m_object->set_receive_mode(mode);
 		}

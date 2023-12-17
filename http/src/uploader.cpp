@@ -40,7 +40,7 @@ namespace anp
 		q.headers.add({ "Content-Length", std::to_string(q.body.size()) });
 		q.method = "POST";
 		return this->query(ep, q, [this](
-			const headers_t& headers
+			const http::headers_t& headers
 			, const char* data
 			, std::size_t sz
 			, int status
@@ -50,7 +50,7 @@ namespace anp
 			if (s.find("uploaded successfully") != std::string::npos)
 			{
 				LOG_DEBUG("Upload has been completed");
-				notify(http_client::erc::no_error);
+				notify(http_client_base::erc::no_error);
 				return true;
 			}
 			else if (s.find("Auth error") != std::string::npos)
@@ -62,7 +62,7 @@ namespace anp
 			{
 				LOG_DEBUG("Upload failed");
 				notify(erc::transfer_error);
-				return true;
+				return false;
 			}
 			return false;
 		});

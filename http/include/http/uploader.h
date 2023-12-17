@@ -15,7 +15,7 @@ namespace anp
 	public:
 		enum erc : int
 		{
-			file_not_exists = base::erc::count,
+			file_not_exists = base::erc::erc_count,
 			transfer_error,
 			auth_error
 		};
