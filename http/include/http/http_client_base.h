@@ -34,6 +34,7 @@ namespace anp
 			connection_error,
 			connection_process_error,
 			http_error,
+			user_error,
 			erc_count
 		};
 
