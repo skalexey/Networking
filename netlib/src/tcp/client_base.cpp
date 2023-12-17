@@ -55,6 +55,10 @@ namespace anp
 			LOG_DEBUG("client_base::~client_base");
 			if (is_connected())
 				disconnect();
+			else
+			{
+				LOG_DEBUG("Already disconnected");
+			}
 			assert(std::this_thread::get_id() != m_ctx_thread_id);
 			if (m_thr_ctx.joinable())
 				m_thr_ctx.join();
