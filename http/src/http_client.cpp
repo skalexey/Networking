@@ -64,10 +64,17 @@ namespace anp
 				switch (get_receive_mode())
 				{
 					case receive_mode::file:
-						if (m_headers_parser.transfer_encoding() == headers_parser::transfer_encoding_type::chunked)
-							m_data_receiver = std::make_unique<http::chunked_data_receiver<utils::data::receiver_file<http_data_t>>>(m_headers_parser.content_length(), get_file_path());
-						else
-							m_data_receiver = std::make_unique<utils::data::receiver_file<http_data_t>>(m_headers_parser.content_length(), get_file_path());
+						try
+						{
+							if (m_headers_parser.transfer_encoding() == headers_parser::transfer_encoding_type::chunked)
+								m_data_receiver = std::make_unique<http::chunked_data_receiver<utils::data::receiver_file<http_data_t>>>(m_headers_parser.content_length(), get_file_path());
+							else
+								m_data_receiver = std::make_unique<utils::data::receiver_file<http_data_t>>(m_headers_parser.content_length(), get_file_path());
+						}
+						catch (const std::exception& ex)
+						{
+							LOG_ERROR("Failed to create a data receiver of type " << get_receive_mode() << ". Content length: " << m_headers_parser.content_length(), ". File path: '" << get_file_path() << "'");
+						}
 						break;
 
 					case receive_mode::memory_full_payload:
@@ -85,6 +92,11 @@ namespace anp
 			}
 		}
 
+		bool result = true;
+		bool response_received = false;
+		const http_data_t* received_data = nullptr;
+		std::size_t received_data_size = 0;
+
 		switch (get_receive_mode())
 		{
 			case receive_mode::memory_full_payload:
@@ -101,19 +113,30 @@ namespace anp
 					}
 					if (m_data_receiver->full())
 					{
-						bool result = true;
-						if (auto on_response = get_on_response()) // Pass control to the user callback
-							PROFILE_TIME(result = on_response(
-									get_headers()
-									, m_data_receiver->data()
-									, m_data_receiver->size()
-									, get_status()
-								)
-							);
-						if (errcode() == http_client_base::erc::unknown) // User may already called notify
-							notify(result ? http_client_base::erc::no_error : http_client_base::erc::user_error);
-						return result;
+						response_received = true;
+						received_data = m_data_receiver->data();
+						received_data_size = m_data_receiver->size();
 					}
+				}
+				else
+				{
+					// We don't accumulate data in the case of no data receiver, so return on the first received TCP packet.
+					// TODO: check if the server closes the connection automatically and implement auto response on connection close.
+					response_received = true;
+				}
+				if (response_received)
+				{
+					if (auto on_response = get_on_response()) // Pass control to the user callback
+						PROFILE_TIME(result = on_response(
+							get_headers()
+							, received_data
+							, received_data_size
+							, get_status()
+						)
+						);
+					if (errcode() == http_client_base::erc::unknown) // User may already called notify
+						notify(result ? http_client_base::erc::no_error : http_client_base::erc::user_error);
+					return result;
 				}
 				break;
 			default:
