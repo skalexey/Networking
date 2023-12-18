@@ -54,14 +54,13 @@ namespace anp
 				if (p == m_cursor && m_last_data.empty())
 				{
 					// Headers block finished
-					if (auto r = on_headers_received())
+					if (m_error_code = on_headers_received())
 					{
-						LOG_DEBUG("Headers parsing error: " << r);
-						return m_error_code = r;
+						LOG_DEBUG("Headers parsing error: " << m_error_code);
 					}
 					m_cursor = p + 2;
 					m_last_data.clear();
-					return erc::done;
+					return m_error_code;
 				}
 				else
 				{
