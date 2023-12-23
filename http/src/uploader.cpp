@@ -18,21 +18,29 @@ namespace anp
 {
 	namespace http
 	{
-		int uploader::upload_file(
+		void uploader::upload_file_async(
 			const tcp::endpoint_t& ep,
 			const fs::path& local_path,
-			const query_t& query
+			const query_t& query,
+			const utils::void_int_cb& cb
 		)
 		{
-			LOG_DEBUG("Uploading file: " << local_path.string());
+			LOG_DEBUG("Uploading file: " << local_path.string() << " to " << query.uri());
+
 			std::string fname = local_path.filename().string();
 			query_t q = query;
 			std::ifstream f(local_path);
 			if (!f.is_open())
-				return notify(erc::file_not_exists);
+			{
+				if (cb)
+					cb(errcode());
+				notify(erc::file_not_exists);
+				return;
+			}
 			std::string file_data = utils::file::contents(local_path);
 
 			q.headers.add({ "Content-Type", "multipart/form-data; boundary=dsfjiofadsio"});
+
 			q.body = utils::format_str(
 				"--dsfjiofadsio\r\n"
 				"Content-Disposition: form-data; name=\"file\"; filename=\"%s\"\r\n"
@@ -43,7 +51,7 @@ namespace anp
 			);
 			q.headers.add({ "Content-Length", std::to_string(q.body.size()) });
 			q.method = "POST";
-			return this->query(ep, q, [this](
+			this->query_async(ep, q, [self = this, cb](
 				const http::headers_t& headers
 				, const char* data
 				, std::size_t sz
@@ -51,24 +59,25 @@ namespace anp
 				) -> bool
 			{
 				std::string s(data, data + sz);
+				int ec = 0;
 				if (s.find("uploaded successfully") != std::string::npos)
 				{
 					LOG_DEBUG("Upload has been completed");
-					notify(http_client_base::erc::no_error);
-					return true;
+					ec = http_client_base::erc::no_error;
 				}
 				else if (s.find("Auth error") != std::string::npos)
 				{
-					notify(erc::auth_error);
-					return false;
+					ec = erc::auth_error;
 				}
 				else
 				{
 					LOG_DEBUG("Upload failed");
-					notify(erc::transfer_error);
-					return false;
+					ec = erc::transfer_error;
 				}
-				return false;
+				if (cb)
+					cb(self->errcode());
+				self->notify(ec);
+				return self->errcode() == http_client_base::erc::no_error;
 			});
 		}
 

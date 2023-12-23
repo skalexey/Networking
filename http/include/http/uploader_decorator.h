@@ -17,13 +17,15 @@ namespace anp
 				: http_client_decorator(object)
 				, m_object(object)
 			{}
-			int upload_file(
+
+			void upload_file_async(
 				const tcp::endpoint_t& ep,
 				const fs::path& target_path,
-				const query_t& query
+				const query_t& query,
+				const utils::void_int_cb& cb = nullptr
 			) override
 			{
-				return m_object->upload_file(ep, target_path, query);
+				m_object->upload_file_async(ep, target_path, query, cb);
 			}
 
 		private:

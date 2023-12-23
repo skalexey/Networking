@@ -3,10 +3,10 @@
 #pragma once
 
 #include <utils/filesystem.h>
-#include "query.h"
 #include <tcp/endpoint.h>
-#include "http_client_interface.h"
-
+#include <utils/common.h>
+#include <http/query.h>
+#include <http/http_client_interface.h>
 namespace anp
 {
 	namespace http
@@ -18,6 +18,17 @@ namespace anp
 				const tcp::endpoint_t& ep,
 				const fs::path& target_path,
 				const query_t& query
+			) {
+				upload_file_async(ep, target_path, query);
+				wait();
+				return errcode();
+			}
+
+			virtual void upload_file_async(
+				const tcp::endpoint_t& ep,
+				const fs::path& target_path,
+				const query_t& query,
+				const utils::void_int_cb& cb = nullptr
 			) = 0;
 		};
 	}
