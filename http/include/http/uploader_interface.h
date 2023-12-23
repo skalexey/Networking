@@ -9,13 +9,16 @@
 
 namespace anp
 {
-	class uploader_interface : public virtual http_client_interface
+	namespace http
 	{
-	public:
-		virtual int upload_file(
-			const tcp::endpoint_t& ep,
-			const fs::path& target_path,
-			const query_t& query
-		) = 0;
-	};
+		class uploader_interface : public virtual http_client_interface
+		{
+		public:
+			virtual int upload_file(
+				const tcp::endpoint_t& ep,
+				const fs::path& target_path,
+				const query_t& query
+			) = 0;
+		};
+	}
 }
