@@ -10,7 +10,7 @@
 #include <utils/file_utils.h>
 #include <tcp/client.h>
 #include <tcp/ssl/client.h>
-#include <http/http_client.h>
+#include <http/http_client_base.h>
 
 LOG_PREFIX("[http_client_base]: ");
 LOG_POSTFIX("\n");
