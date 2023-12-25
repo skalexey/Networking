@@ -92,7 +92,8 @@
         "xtree": "cpp",
         "*.sh": "cpp",
         "*.ipp": "cpp",
-        "cassert": "cpp"
+        "cassert": "cpp",
+        "variant": "cpp"
     },
     "cmake.useCMakePresets": "auto",
     "cmake.environment": {
