@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <http/http_client.h>
 #include <utils/string_utils.h>
+#include <utils/networking/http.h>
 #include "HTTPClient.h"
 #include <DMBCore.h>
 #include <utils/Log.h>
@@ -79,6 +80,11 @@ int main()
 				anp::query_t q;
 				q.method = "GET";
 				c.query(ep, q);
+			}
+			else if (msg == "upload_file_test")
+			{
+				ep = {"srv.vllibrary.net", 443};
+				utils::http::upload_file_with_auth<anp::http::url_uploader>("test2.txt", ep, "/v/h.php", "skalexey", "3834057684");
 			}
 			msg.clear();
 		}

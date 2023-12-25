@@ -9,7 +9,8 @@ macro(setup_module)
 	set(NETLIB_DIR "${PARENT_DIR}/netlib")
 	add_dependency_module(${NETLIB_DIR} netlib)
 	set(UTILS_DIR "${DEPS}/Utils")
-
+	set(ZLIB_DIR "${DEPS}/zlib-1.3")
+	add_subdirectory(${ZLIB_DIR} ${ZLIB_DIR})
 	# set(http_INCLUDES ${SOME_INCLUDES})
 
 	add_src( 
@@ -20,11 +21,16 @@ macro(setup_module)
 		${UTILS_DIR}/include/utils/data_receiver_memory.h
 		${UTILS_DIR}/include/utils/data_receiver_file.h
 		${UTILS_DIR}/include/utils/data_receiver.h
+		${UTILS_DIR}/include/utils/networking/url.h
+		${UTILS_DIR}/include/utils/networking/http.h
+		${UTILS_DIR}/include/utils/zip.h
+		${UTILS_DIR}/src/zip.cpp
 	)
 
 	module_add_includes( 
 		${UTILS_DIR}/include
 		${CERTIFY_DIR}/include
+		${ZLIB_DIR}
 	)
 
 	# Group sources for IDE
@@ -33,6 +39,8 @@ macro(setup_module)
 
 	# add library
 	module_add_library()
+
+	target_link_libraries(${MODULE_NAME} PUBLIC zlibstatic)
 endmacro()
 
 include(cmake_modules/modules.cmake)
