@@ -151,7 +151,7 @@ namespace anp
 		const std::string& query,
 		const http_response_cb& on_receive,
 		const http::headers_t& headers,
-		const std::string& body
+		const anp::sock_data_t& body
 	)
 	{
 		std::string req = utils::format_str(
@@ -187,11 +187,14 @@ namespace anp
 			add_header(n, v);
 		
 		req += "\r\n";
-		req += body;
+
+		anp::sock_data_t req_bin;
+		req_bin.insert(req_bin.end(), req.begin(), req.end());
+		req_bin.insert(req_bin.end(), body.begin(), body.end());
 
 		request_async(
 			endpoint
-			, req
+			, req_bin
 			, on_receive
 		);
 	}

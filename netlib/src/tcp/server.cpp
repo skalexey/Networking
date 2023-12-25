@@ -141,7 +141,7 @@ namespace anp
 			LOCAL_VERBOSE("Stopped");
 		}
 
-		bool server::send(const std::string& msg, int conn_id)
+		bool server::send(const anp::sock_data_t& msg, int conn_id)
 		{
 			if (conn_id < 0)
 			{

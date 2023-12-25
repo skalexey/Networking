@@ -25,7 +25,7 @@ namespace anp
 	//	const std::string& query,
 	//	const http_response_cb& on_receive,
 	//	const headers_t& headers,
-	//	const std::string& body
+	//	const anp::sock_data_t& body
 	//)
 	//{
 	//	std::string req = utils::format_str(

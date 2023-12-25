@@ -15,7 +15,7 @@ namespace anp
 
 		int request(
 			const tcp::endpoint_t& endpoint,
-			const std::string& request,
+			const anp::sock_data_t& request,
 			const http_response_cb& on_receive
 		)
 		{
@@ -24,7 +24,7 @@ namespace anp
 
 		void request_async(
 			const tcp::endpoint_t& endpoint,
-			const std::string& request,
+			const anp::sock_data_t& request,
 			const http_response_cb& on_receive
 		)
 		{
@@ -42,7 +42,7 @@ namespace anp
 			const std::string& query,
 			const http_response_cb& on_receive = http_response_cb(),
 			const http::headers_t& m_headers = http::headers_t(),
-			const std::string& body = ""
+			const anp::sock_data_t& body = {}
 		) override
 		{
 			m_object->query_async(endpoint, method, query, on_receive, m_headers, body);

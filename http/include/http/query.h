@@ -5,8 +5,9 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <anp/common.h>
 #include <utils/ordered_map.h>
-#include "headers.h"
+#include <http/headers.h>
 
 namespace anp
 {
@@ -27,11 +28,14 @@ namespace anp
 	struct query_t
 	{	
 		std::string path;
-		values_t values;
 		std::string method;
 		http::headers_t headers;
-		std::string body;
+		anp::sock_data_t body;
 		
 		std::string uri() const;
+		void add_value(const std::string& key, const std::string& value);
+
+		private:
+			values_t m_values;
 	};
 }

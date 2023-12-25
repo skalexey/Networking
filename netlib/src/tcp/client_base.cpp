@@ -205,9 +205,9 @@ namespace anp
 			return false;
 		}
 
-		void client_base::send(const std::string& msg, const response_cb& on_response)
+		void client_base::send(const anp::sock_data_t& msg, const response_cb& on_response)
 		{
-			LOCAL_DEBUG("Send data: \n'" << msg << "'\n\n");
+			LOCAL_DEBUG("Send data: \n'" << (const char*)msg.data() << "'\n\n");
 
 			if (!m_connection)
 			{

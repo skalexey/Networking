@@ -28,7 +28,7 @@ namespace anp
 			};
 			void connect(const tcp::endpoint_t& ep, const asio_operation_cb& on_result = nullptr);
 			void close();
-			void send(const std::string& msg, const response_cb& on_response = nullptr);
+			void send(const anp::sock_data_t& msg, const response_cb& on_response = nullptr);
 			void subscribe_on_receive(void* subscriber, const data_cb& cb) {
 				m_on_receive[subscriber] = cb;
 			}

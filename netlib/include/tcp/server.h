@@ -23,7 +23,7 @@ namespace anp
 			bool start(int port);
 			void stop();
 			void set_on_receive(const data_cb& cb);
-			bool send(const std::string& msg, int conn_id = -1);
+			bool send(const anp::sock_data_t& msg, int conn_id = -1);
 
 		protected:
 			void WaitClientConnection();

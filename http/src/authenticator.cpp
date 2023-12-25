@@ -63,8 +63,8 @@ namespace anp
 	query_t credentials::query() const
 	{
 		query_t q;
-		q.values.add("u", user);
-		q.values.add("t", token);
+		q.add_value("u", user);
+		q.add_value("t", token);
 		return q;
 	}
 }

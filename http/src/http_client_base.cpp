@@ -31,7 +31,7 @@ namespace anp
 
 	int http_client_base::request(
 		const tcp::endpoint_t& endpoint
-		, const std::string& request
+		, const anp::sock_data_t& request
 		, const http_response_cb& on_receive
 	)
 	{
@@ -42,7 +42,7 @@ namespace anp
 
 	void http_client_base::request_async(
 		const tcp::endpoint_t& endpoint
-		, const std::string& request
+		, const anp::sock_data_t& request
 		, const http_response_cb& on_response
 	)
 	{

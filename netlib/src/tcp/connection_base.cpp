@@ -143,7 +143,7 @@ namespace anp
 			m_on_connect.clear();
 		}
 
-		void connection_base::send(const std::string& msg, const response_cb& on_response)
+		void connection_base::send(const anp::sock_data_t& msg, const response_cb& on_response)
 		{
 			if (on_response)
 			{
@@ -162,7 +162,7 @@ namespace anp
 					return;
 				}
 				asio::error_code ec;
-				socket().async_write(msg.c_str(), msg.size(), [&](std::error_code ec, std::size_t wrc) {
+				socket().async_write((const char*)msg.data(), msg.size(), [&](std::error_code ec, std::size_t wrc) {
 					LOCAL_VERBOSE("Written " << wrc << " bytes");
 					read_async();
 				});

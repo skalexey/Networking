@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <string>
+#include <anp/common.h>
 #include <utils/filesystem.h>
 #include <tcp/endpoint.h>
 #include <http/query.h>
@@ -48,13 +49,13 @@ namespace anp
 
 		virtual int request(
 			const tcp::endpoint_t& endpoint,
-			const std::string& request,
+			const anp::sock_data_t& request,
 			const http_response_cb& on_receive
 		) = 0;
 
 		virtual void request_async(
 			const tcp::endpoint_t& endpoint,
-			const std::string& request,
+			const anp::sock_data_t& request,
 			const http_response_cb& on_receive
 		) = 0;
 
@@ -67,7 +68,7 @@ namespace anp
 			const std::string& query,
 			const http_response_cb& on_receive = http_response_cb(),
 			const http::headers_t& m_headers = http::headers_t(),
-			const std::string& body = ""
+			const anp::sock_data_t& body = {}
 		);
 
 		virtual void query_async(
@@ -76,7 +77,7 @@ namespace anp
 			const std::string& query,
 			const http_response_cb& on_receive = http_response_cb(),
 			const http::headers_t& m_headers = http::headers_t(),
-			const std::string& body = ""
+			const anp::sock_data_t& body = {}
 		) = 0;
 		// End of Alternative interface
 		

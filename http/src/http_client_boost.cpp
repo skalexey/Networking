@@ -66,7 +66,7 @@ namespace anp
 		const std::string& query,
 		const http_response_cb& on_receive,
 		const http::headers_t& headers,
-		const std::string& body
+		const anp::sock_data_t& body
 	)
 	{
 		int version = 11;
@@ -106,17 +106,18 @@ namespace anp
 		for (auto&& [n, v] : def_headers)
 			add_header(n, v);
 		
-		std::ostringstream oss;
-		oss << beast_req;
-		std::string req = oss.str();
-		LOG_DEBUG("Beast request: '" << req << "'");
-		oss.clear();
+		// TODO: support binary data
+		//std::ostringstream oss;
+		//oss << beast_req;
+		//std::string req = oss.str();
+		//LOG_DEBUG("Beast request: '" << req << "'");
+		//oss.clear();
 
-		request_async(
-			endpoint
-			, req
-			, on_receive
-		);
+		//request_async(
+		//	endpoint
+		//	, req
+		//	, on_receive
+		//);
 	}
 
 	void http_client_boost::reset(client_type c)

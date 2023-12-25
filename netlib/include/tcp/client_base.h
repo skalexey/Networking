@@ -23,7 +23,7 @@ namespace anp
 			// disconnect() Should be called from the thread that called connect()
 			void disconnect();
 			bool is_connected() const;
-			void send(const std::string& msg, const response_cb& on_response = nullptr);
+			void send(const anp::sock_data_t& msg, const response_cb& on_response = nullptr);
 			void set_on_receive(const data_cb& cb);
 			void add_on_connect(const error_cb& cb);
 			void set_on_close(const utils::void_cb& cb);

@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 #include <tcp/fwd.h>
-#include <anp/common.h>
 #include <utils/data_receiver_base.h>
 #include <http/headers_parser.h>
 #include <http/http_client_base.h>
@@ -33,7 +32,7 @@ namespace anp
 			const std::string& query,
 			const http_response_cb& on_receive = http_response_cb(),
 			const http::headers_t& m_headers = http::headers_t(),
-			const std::string& body = ""
+			const anp::sock_data_t& body = {}
 		) override;
 
 		// MSVC fix.

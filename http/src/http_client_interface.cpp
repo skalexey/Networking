@@ -1,6 +1,7 @@
 ﻿// http_client_interface.cpp
 
 #include <http/http_client_interface.h>
+#include <anp/common.h>
 
 namespace anp
 {
@@ -28,7 +29,7 @@ namespace anp
 		const std::string& query,
 		const http_response_cb& on_receive,
 		const http::headers_t& headers,
-		const std::string& body
+		const anp::sock_data_t& body
 	)
 	{
 		query_async(endpoint, method, query, on_receive, headers, body);

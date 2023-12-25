@@ -14,16 +14,22 @@ namespace anp
 	std::string query_t::uri() const
 	{
 		std::string uri = path;
-		if (!values.empty())
+		if (!m_values.empty())
 		{
 			uri += "?";
-			uri += values.to_string();
+			uri += m_values.to_string();
 		}
-		else
+		else if(path.empty())
 		{
 			uri = "/";
 		}
 		return uri;
+	}
+
+	void query_t::add_value(const std::string& key, const std::string& value)
+	{
+		// auto value_encoded = utils::url_encode(value);
+		m_values.add(key, value);
 	}
 
 	std::string values_t::to_string() const

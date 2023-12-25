@@ -37,18 +37,23 @@ namespace anp
 				notify(erc::file_not_exists);
 				return;
 			}
-			std::string file_data = utils::file::contents(local_path);
+			std::vector<unsigned char> file_data = utils::file::contents<std::vector<unsigned char>>(local_path);
 
 			q.headers.add({ "Content-Type", "multipart/form-data; boundary=dsfjiofadsio"});
 
-			q.body = utils::format_str(
+			std::string tmp =
 				"--dsfjiofadsio\r\n"
-				"Content-Disposition: form-data; name=\"file\"; filename=\"%s\"\r\n"
-				"Content-Type: text/plain\r\n\r\n"
+				"Content-Disposition: form-data; name=\"file\"; filename=\"";
+			q.body.insert(q.body.end(), tmp.begin(), tmp.end());
+			q.body.insert(q.body.end(), fname.begin(), fname.end());
+			tmp =
+				"\r\n"
+				"Content-Type: text/plain\r\n\r\n";
+			q.body.insert(q.body.end(), tmp.begin(), tmp.end());
+			q.body.insert(q.body.end(), file_data.begin(), file_data.end());
+			tmp =
 				"%s\r\n"
-				"--dsfjiofadsio--"
-				, fname.c_str(), file_data.c_str()
-			);
+				"--dsfjiofadsio--";
 			q.headers.add({ "Content-Length", std::to_string(q.body.size()) });
 			q.method = "POST";
 			this->query_async(ep, q, [self = this, cb](

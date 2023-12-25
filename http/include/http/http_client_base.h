@@ -9,7 +9,6 @@
 #include <mutex>
 #include <condition_variable>
 #include <tcp/fwd.h>
-#include <anp/common.h>
 #include <http/query.h>
 #include <http/http_client_interface.h>
 
@@ -43,13 +42,13 @@ namespace anp
 
 		int request(
 			const tcp::endpoint_t& endpoint,
-			const std::string& request,
+			const anp::sock_data_t& request,
 			const http_response_cb& on_receive
 		) override;
 
 		void request_async(
 			const tcp::endpoint_t& endpoint,
-			const std::string& request,
+			const anp::sock_data_t& request,
 			const http_response_cb& on_receive
 		) override;
 

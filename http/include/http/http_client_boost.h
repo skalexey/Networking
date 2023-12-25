@@ -34,7 +34,7 @@ namespace anp
 			const std::string& query,
 			const http_response_cb& on_receive = http_response_cb(),
 			const http::headers_t& m_headers = http::headers_t(),
-			const std::string& body = ""
+			const anp::sock_data_t& body = {}
 		) override;
 
 	// http_client_base overrides
