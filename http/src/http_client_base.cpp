@@ -49,7 +49,7 @@ namespace anp
 		auto type = endpoint.port == 443 ? client_type::https : client_type::http;
 		reset(type);
 
-		LOG_VERBOSE("request: " << request);
+		LOG_VERBOSE("request: " << request.data());
 
 		m_client->set_on_close([&] {
 			notify(m_error_code);
