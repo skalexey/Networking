@@ -43,12 +43,12 @@ namespace anp
 	{
 		// --- receiver_memory ---
 		template <typename Final_receiver_t>
-		class chunked_data_receiver : public utils::data::receiver_base<Final_receiver_t::template data_element_t>
+		class chunked_data_receiver : public utils::data::receiver_base<typename Final_receiver_t::data_element_t>
 		{
 		public:
-			using base = utils::data::receiver_base<Final_receiver_t::template data_element_t>;
-			using data_t = Final_receiver_t::template data_t;
-			using data_element_t = Final_receiver_t::template data_element_t;
+			using base = utils::data::receiver_base<typename Final_receiver_t::data_element_t>;
+			using data_t = typename Final_receiver_t::data_t;
+			using data_element_t = typename Final_receiver_t::data_element_t;
 			enum chunked_data_receiver_error : int
 			{
 				control_block_partial_receive = Final_receiver_t::count,
@@ -106,7 +106,7 @@ namespace anp
 					// Receiveing the data
 					auto data_amount_before = this->size();
 					m_final_receiver.receive(cur, size - (cur - data)); // It will receive no more than the current chunk
-					if (error_code() != 0)
+					if (base::error_code() != 0)
 						return cur - data;
 					auto received_data_amount = this->size() - data_amount_before;
 					assert(received_data_amount >= 0);
@@ -153,7 +153,7 @@ namespace anp
 			bool receive_control_data(const data_element_t*& cur, const std::size_t& size) {
 				auto received = m_control_data_receiver.receive(cur, size);
 				cur += received;
-				return error_code() == 0 && (m_control_data_receiver.full() || m_control_data_receiver.is_unlimited());
+				return base::error_code() == 0 && (m_control_data_receiver.full() || m_control_data_receiver.is_unlimited());
 			}
 
 		private:

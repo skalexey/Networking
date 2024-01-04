@@ -147,7 +147,7 @@ namespace anp
 				m_client = std::make_unique<tcp::ssl::client>();
 				break;
 			default:
-				throw std::exception("Unknown client type");
+				throw std::runtime_error("Unknown client type");
 		}
 		// TODO: clean this too
 		//m_file_path.clear();

@@ -73,7 +73,7 @@ namespace anp
 						}
 						catch (const std::exception& ex)
 						{
-							LOG_ERROR("Failed to create a data receiver of type " << get_receive_mode() << ". Content length: " << m_headers_parser.content_length(), ". File path: '" << get_file_path() << "'");
+							LOG_ERROR("Failed to create a data receiver of type " << get_receive_mode() << ". Content length: " << m_headers_parser.content_length() << ". File path: '" << get_file_path() << "'");
 						}
 						break;
 

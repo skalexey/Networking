@@ -16,11 +16,11 @@ namespace anp
 		{
 		public:
 			using base = socket_interface<Buffer_t>;
-			using buffer_value_type = base::buffer_t::template value_type;
-			void async_read_some(base::buffer_t& buf, const base::response_cb_t& cb) override {
+			using buffer_value_type = typename base::buffer_t::value_type;
+			void async_read_some(typename base::buffer_t& buf, const typename base::response_cb_t& cb) override {
 				soc().async_read_some(asio::buffer(buf.data(), buf.size()), cb);
 			}
-			void async_write(const buffer_value_type* begin, std::size_t size, const base::response_cb_t& cb) override {
+			void async_write(const buffer_value_type* begin, std::size_t size, const typename base::response_cb_t& cb) override {
 				asio::async_write(soc(), asio::buffer(begin, size), cb);
 			}
 			bool is_open() const override {
