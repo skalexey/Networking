@@ -42,7 +42,12 @@ macro(setup_module)
 	module_add_library()
 
 	target_link_directories(netlib PUBLIC ${OPENSSL_PATH})
-	target_link_libraries(netlib PUBLIC libssl_static libcrypto_static)
+	# if linux
+	if(WIN32)
+		target_link_libraries(netlib PUBLIC libssl_static libcrypto_static)
+	else()
+		target_link_libraries(netlib PUBLIC libssl.a libcrypto.a)
+	endif()
 	module_message("CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
 	if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 		target_link_libraries(netlib PUBLIC crypt32)
