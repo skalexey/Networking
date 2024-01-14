@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <unordered_map>
 #include <tcp/socket.h>
 #include <anp/common.h>
 #include <tcp/endpoint.h>
