@@ -22,7 +22,7 @@
 
 LOG_PREFIX("[http_client_boost]: ");
 LOG_POSTFIX("\n");
-SET_LOG_DEBUG(true);
+SET_LOCAL_LOG_DEBUG(true);
 
 namespace beast = boost::beast;     // from <boost/beast.hpp>
 //namespace http = beast::http;       // from <boost/beast/http.hpp>

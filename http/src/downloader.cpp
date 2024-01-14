@@ -16,7 +16,7 @@
 
 LOG_PREFIX("[downloader]: ");
 LOG_POSTFIX("\n");
-SET_LOG_DEBUG(true);
+SET_LOCAL_LOG_DEBUG(true);
 namespace ch = std::chrono;
 
 namespace anp

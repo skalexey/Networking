@@ -11,7 +11,7 @@
 
 LOG_PREFIX("[url_uploader]: ");
 LOG_POSTFIX("\n");
-SET_LOG_DEBUG(true);
+SET_LOCAL_LOG_DEBUG(true);
 
 namespace anp
 {

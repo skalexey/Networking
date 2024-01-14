@@ -6,9 +6,8 @@
 #include <boost/certify/extensions.hpp>
 #include <boost/certify/https_verification.hpp>
 
-SET_LOG_VERBOSE(true)
+SET_LOCAL_LOG_VERBOSE(true)
 LOG_TITLE("ssl/connection")
-LOG_PREFIX("[ssl/connection]: ");
 LOG_POSTFIX("\n");
 
 namespace anp

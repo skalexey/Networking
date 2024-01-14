@@ -9,10 +9,9 @@
 #include "tcp/client_base.h"
 #include <utils/Log.h>
 #include <utils/profiler.h>
-SET_LOG_VERBOSE(true)
-SET_LOG_DEBUG(true)
-LOG_TITLE("tcp_client_base")
-LOG_PREFIX("[client_base]: ");
+SET_LOCAL_LOG_VERBOSE(true)
+SET_LOCAL_LOG_DEBUG(true)
+LOG_TITLE("tcp/client_base")
 LOG_POSTFIX("\n");
 using namespace std::chrono_literals;
 

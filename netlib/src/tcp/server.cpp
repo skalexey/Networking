@@ -4,7 +4,7 @@
 #include <asio/ts/buffer.hpp>
 #include "tcp/server.h"
 #include <utils/Log.h>
-SET_LOG_VERBOSE(true)
+SET_LOCAL_LOG_VERBOSE(true)
 LOG_TITLE("tcp_server")
 
 namespace
