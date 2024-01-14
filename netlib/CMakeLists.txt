@@ -9,6 +9,14 @@ macro(setup_module)
 	module_message("Boost path: '${BOOST_PATH}'")
 
 	# OpenSSL dependency
+	if(NOT "${ANDROID_ABI}" STREQUAL "")
+		module_message("ANDROID_ABI: '${ANDROID_ABI}'")
+		set(OPENSSL_BUILD_FOLDER ${ANDROID_ABI})
+	elseif(WIN32)
+		set(OPENSSL_BUILD_FOLDER "win32")
+	else()
+		set(OPENSSL_BUILD_FOLDER "linux")
+	endif()
 	set(OPENSSL_PATH ${DEPS}/openssl-3.1.4)
 	module_message("OpenSSL path: '${OPENSSL_PATH}'")
 
@@ -41,8 +49,7 @@ macro(setup_module)
 	# add library
 	module_add_library()
 
-	target_link_directories(netlib PUBLIC ${OPENSSL_PATH})
-	# if linux
+	target_link_directories(netlib PUBLIC ${OPENSSL_PATH}/build/${OPENSSL_BUILD_FOLDER})
 	if(WIN32)
 		target_link_libraries(netlib PUBLIC libssl_static libcrypto_static)
 	else()
