@@ -49,15 +49,28 @@ macro(setup_module)
 	# add library
 	module_add_library()
 
-	target_link_directories(netlib PUBLIC ${OPENSSL_PATH}/build/${OPENSSL_BUILD_FOLDER})
+	target_link_directories(${MODULE_NAME} PUBLIC ${OPENSSL_PATH}/build/${OPENSSL_BUILD_FOLDER})
 	if(WIN32)
-		target_link_libraries(netlib PUBLIC libssl_static libcrypto_static)
+		target_link_libraries(${MODULE_NAME} PUBLIC libssl_static libcrypto_static)
 	else()
-		target_link_libraries(netlib PUBLIC libssl.a libcrypto.a)
+		# Check if the target system is macOS
+		if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+			# Find the Security framework
+			find_library(SECURITY_LIBRARY Security)
+
+			# Check if the Security framework is found
+			if(SECURITY_LIBRARY)
+				# Add the Security framework to the target
+				target_link_libraries(${MODULE_NAME} PRIVATE ${SECURITY_LIBRARY})
+			else()
+				message(FATAL_ERROR "${MODULE_NAME}: Security framework not found.")
+			endif()
+		endif()
+		target_link_libraries(${MODULE_NAME} PUBLIC libssl.a libcrypto.a)
 	endif()
 	module_message("CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
 	if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-		target_link_libraries(netlib PUBLIC crypt32)
+		target_link_libraries(${MODULE_NAME} PUBLIC crypt32)
 	endif()
 endmacro()
 
