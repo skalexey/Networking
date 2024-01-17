@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <memory>
 #include <utils/filesystem.h>
 #include <tcp/endpoint.h>
 #include <utils/common.h>
@@ -31,5 +32,6 @@ namespace anp
 				const utils::void_int_cb& cb = nullptr
 			) = 0;
 		};
+		using uploader_interface_ptr = std::shared_ptr<uploader_interface>;
 	}
 }

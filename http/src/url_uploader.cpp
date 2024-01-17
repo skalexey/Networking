@@ -70,7 +70,7 @@ namespace anp
 					ec = uploader::erc::transfer_error;
 				}
 				if (cb)
-					cb(self->errcode());
+					cb(ec);
 				self->notify(ec);
 				return self->errcode() == http_client_base::erc::no_error;
 			});

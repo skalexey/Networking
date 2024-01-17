@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <memory>
 #include <utils/filesystem.h>
 #include "http_client_decorator.h"
 #include "uploader_interface.h"
@@ -15,8 +16,14 @@ namespace anp
 		public:
 			uploader_decorator(uploader_interface* object) 
 				: http_client_decorator(object)
-				, m_object(object)
-			{}
+			{
+				try {
+					m_object = std::dynamic_pointer_cast<uploader_interface>(object->shared_from_this());
+				}
+				catch (std::bad_weak_ptr const&) {
+					m_object = uploader_interface_ptr(object);
+				}
+			}
 
 			void upload_file_async(
 				const tcp::endpoint_t& ep,
@@ -29,7 +36,7 @@ namespace anp
 			}
 
 		private:
-			uploader_interface* m_object = nullptr;
+			uploader_interface_ptr m_object = nullptr;
 		};
 	}
 }
