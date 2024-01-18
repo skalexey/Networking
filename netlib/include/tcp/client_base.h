@@ -17,7 +17,7 @@ namespace anp
 		class client_base
 		{
 		public:
-			~client_base();
+            virtual ~client_base();
 			// All operations are asynchronouse
 			bool connect(const std::string& host, int port, const anp::error_cb& cb = nullptr);
 			// disconnect() Should be called from the thread that called connect()
