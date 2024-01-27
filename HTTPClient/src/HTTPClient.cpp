@@ -83,7 +83,7 @@ int main()
 			}
 			else if (msg == "upload_file_test")
 			{
-				ep = {"srv.vllibrary.net", 443};
+				ep = {"srv.vllibrary.net", 80};
 				utils::http::upload_file_with_auth<anp::http::url_uploader>("test2.txt", ep, "/v/h.php", "skalexey", "3834057684");
 			}
 			msg.clear();
