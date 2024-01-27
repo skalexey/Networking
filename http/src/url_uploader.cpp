@@ -2,12 +2,12 @@
 
 #include <http/uploader.h>
 #include <http/url_uploader.h>
-#include <utils/Log.h>
 #include <utils/string_utils.h>
 #include <utils/file_utils.h>
 #include <utils/datetime.h>
 #include <utils/base64.h>
 #include <utils/zip.h>
+#include <utils/Log.h>
 
 LOG_PREFIX("[url_uploader]: ");
 LOG_POSTFIX("\n");
