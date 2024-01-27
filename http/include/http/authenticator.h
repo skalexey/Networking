@@ -22,11 +22,6 @@ namespace anp
 		using base = http_client;
 
 	public:
-		enum erc : int
-		{
-			auth_error = http_client::erc::erc_count,
-		};
-
 		int auth(const tcp::endpoint_t& ep, const std::string& path, const credentials& credentials);
 		void auth_async(const tcp::endpoint_t& ep, const std::string& path, const credentials& credentials, const anp::result_cb& on_result);
 

@@ -27,6 +27,33 @@ namespace anp
 	class http_client_interface : public std::enable_shared_from_this<http_client_interface>
 	{
 	public:
+		enum erc : int
+		{
+			unknown = -1,
+			no_error = 0,
+			connection_error,
+			connection_process_error,
+			http_error,
+			user_error,
+			auth_error,
+			parse_date_error,
+			no_date,
+			file_error,
+			store_download_error,
+			uncommitted_changes,
+			uncommitted_old_changes,
+			newer_version_on_server,
+			no_file,
+			backup_error,
+			update_last_version_error,
+			parse_headers_error,
+			data_receiver_error,
+			file_not_exists,
+			transfer_error,
+			beast_error,
+			erc_count
+		};
+		
 		enum receive_mode : int
 		{
 			memory_tcp_packet,

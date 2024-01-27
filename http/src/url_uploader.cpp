@@ -33,7 +33,7 @@ namespace anp
 			{
 				if (cb)
 					cb(errcode());
-				notify(uploader::erc::file_not_exists);
+				notify(erc::file_not_exists);
 				return;
 			}
 			std::string file_data = utils::file::contents(local_path);
@@ -54,25 +54,11 @@ namespace anp
 				) -> bool
 			{
 				std::string s(data, data + sz);
-				int ec = 0;
-				if (s.find("uploaded successfully") != std::string::npos)
-				{
-					LOG_DEBUG("Upload has been completed");
-					ec = http_client_base::erc::no_error;
-				}
-				else if (s.find("Auth error") != std::string::npos)
-				{
-					ec = uploader::erc::auth_error;
-				}
-				else
-				{
-					LOG_DEBUG("Upload failed");
-					ec = uploader::erc::transfer_error;
-				}
+				int ec = self->parse_upload_result_code(s);
 				if (cb)
 					cb(ec);
 				self->notify(ec);
-				return self->errcode() == http_client_base::erc::no_error;
+				return self->errcode() == erc::no_error;
 			});
 		}
 	}

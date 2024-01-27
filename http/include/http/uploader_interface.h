@@ -15,6 +15,8 @@ namespace anp
 		class uploader_interface : public virtual http_client_interface
 		{
 		public:
+			using base = http_client_interface;
+
 			virtual int upload_file(
 				const tcp::endpoint_t& ep,
 				const fs::path& target_path,
@@ -31,6 +33,9 @@ namespace anp
 				const query_t& query,
 				const utils::void_int_cb& cb = nullptr
 			) = 0;
+
+		protected:
+			int parse_upload_result_code(const std::string& s);
 		};
 		using uploader_interface_ptr = std::shared_ptr<uploader_interface>;
 	}

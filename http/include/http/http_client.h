@@ -17,13 +17,6 @@ namespace anp
 		using base = http_client_base;
 
 	public:
-		enum erc : int
-		{
-			parse_headers_error = int(http_client_base::erc::erc_count),
-			data_receiver_error,
-			erc_count
-		};
-
 		~http_client();
 		
 		void query_async(

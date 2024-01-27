@@ -14,15 +14,6 @@ namespace anp
 		using base = http_client;
 
 	public:
-		enum erc : int
-		{
-			parse_date_error = http_client::erc::erc_count,
-			no_date,
-			file_error,
-			store_download_error,
-			count
-		};
-
 		int download_file(
 			const tcp::endpoint_t& ep
 			, const query_t& query = {}

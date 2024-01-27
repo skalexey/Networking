@@ -20,12 +20,6 @@ namespace anp
 		using base = http_client_base;
 
 	public:
-		enum erc : int
-		{
-			beast_error = http_client_base::erc::erc_count,
-			count
-		};
-
 		~http_client_boost();
 
 		void query_async(

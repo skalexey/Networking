@@ -134,8 +134,8 @@ namespace anp
 							, get_status()
 						)
 						);
-					if (errcode() == http_client_base::erc::unknown) // User may already called notify
-						notify(result ? http_client_base::erc::no_error : http_client_base::erc::user_error);
+					if (errcode() == erc::unknown) // User may already called notify
+						notify(result ? erc::no_error : erc::user_error);
 					return result;
 				}
 				break;

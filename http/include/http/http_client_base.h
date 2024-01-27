@@ -26,17 +26,6 @@ namespace anp
 			receive_mode_count,
 		};
 
-		enum erc : int
-		{
-			unknown = -1,
-			no_error = 0,
-			connection_error,
-			connection_process_error,
-			http_error,
-			user_error,
-			erc_count
-		};
-
 		http_client_base();
 		~http_client_base();
 

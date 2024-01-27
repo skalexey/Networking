@@ -15,13 +15,6 @@ namespace anp
 			using base = http_client;
 
 		public:
-			enum erc : int
-			{
-				file_not_exists = base::erc::erc_count,
-				transfer_error,
-				auth_error
-			};
-
 			void upload_file_async(
 				const tcp::endpoint_t& ep,
 				const fs::path& target_path,
