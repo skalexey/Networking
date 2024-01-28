@@ -25,7 +25,11 @@ macro(setup_module)
 
 	# Certify dependency
 	set(CERTIFY_DIR "${DEPS}/certify")
-	add_dependency(${CERTIFY_DIR} certify)
+	if (ANDROID)
+		# TODO: resolve Boost paths for Android
+	else()
+		add_dependency(${CERTIFY_DIR} certify)
+	endif()
 
 	module_message("Parent dir: ${PARENT_DIR}")
 
