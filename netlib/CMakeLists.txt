@@ -25,6 +25,7 @@ macro(setup_module)
 
 	# Certify dependency
 	set(CERTIFY_DIR "${DEPS}/certify")
+	add_dependency(${CERTIFY_DIR} certify)
 
 	module_message("Parent dir: ${PARENT_DIR}")
 
@@ -67,6 +68,10 @@ macro(setup_module)
 			endif()
 		endif()
 		target_link_libraries(${MODULE_NAME} PUBLIC libssl.a libcrypto.a)
+	endif()
+	if (APPLE)
+		# TODO: investigate: Certify is complaining about missing CoreFoundation on macOS though it links it by itself, but privately
+		target_link_libraries(${MODULE_NAME} PUBLIC "-framework CoreFoundation")
 	endif()
 	module_message("CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
 	if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")

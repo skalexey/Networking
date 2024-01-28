@@ -29,7 +29,6 @@ macro(setup_module)
 
 	module_add_includes( 
 		${UTILS_DIR}/include
-		${CERTIFY_DIR}/include
 		${ZLIB_DIR}
 	)
 
