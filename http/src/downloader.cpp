@@ -14,9 +14,8 @@
 #include <tcp/client.h>
 #include <http/downloader.h>
 
-LOG_PREFIX("[downloader]: ");
-LOG_POSTFIX("\n");
-SET_LOCAL_LOG_DEBUG(true);
+LOG_TITLE("downloader");
+SET_LOCAL_LOG_LEVEL(debug);
 namespace ch = std::chrono;
 
 namespace anp

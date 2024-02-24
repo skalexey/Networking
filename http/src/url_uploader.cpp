@@ -9,9 +9,8 @@
 #include <utils/zip.h>
 #include <utils/Log.h>
 
-LOG_PREFIX("[url_uploader]: ");
-LOG_POSTFIX("\n");
-SET_LOCAL_LOG_DEBUG(true);
+LOG_TITLE("url_uploader");
+SET_LOCAL_LOG_LEVEL(debug);
 
 namespace anp
 {

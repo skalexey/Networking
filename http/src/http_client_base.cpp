@@ -12,9 +12,8 @@
 #include <tcp/ssl/client.h>
 #include <http/http_client_base.h>
 
-LOG_PREFIX("[http_client_base]: ");
-LOG_POSTFIX("\n");
-SET_LOCAL_LOG_DEBUG(true);
+LOG_TITLE("http_client_base");
+SET_LOCAL_LOG_LEVEL(debug);
 
 namespace anp
 {

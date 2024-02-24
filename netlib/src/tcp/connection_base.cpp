@@ -1,8 +1,7 @@
 #include <tcp/connection_base.h>
 #include <utils/Log.h>
-SET_LOCAL_LOG_VERBOSE(true)
+SET_LOCAL_LOG_LEVEL(verbose)
 LOG_TITLE("tcp/connection_base")
-LOG_POSTFIX("\n");
 
 namespace
 {

@@ -1,8 +1,7 @@
 #include <tcp/connection.h>
 #include <utils/Log.h>
-SET_LOCAL_LOG_VERBOSE(true)
+SET_LOCAL_LOG_LEVEL(verbose)
 LOG_TITLE("tcp/connection")
-LOG_POSTFIX("\n");
 
 namespace anp
 {

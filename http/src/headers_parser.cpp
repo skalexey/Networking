@@ -5,8 +5,7 @@
 #include <utils/string_utils.h>
 #include <http/headers_parser.h>
 
-LOG_PREFIX("[headers_parser]: ");
-LOG_POSTFIX("\n");
+LOG_TITLE("headers_parser");
 
 namespace anp
 {

@@ -5,10 +5,10 @@
 #include <openssl/ssl.h>
 #include <boost/certify/extensions.hpp>
 #include <boost/certify/https_verification.hpp>
+#include <tcp/ssl/root_certificates.hpp>
 
-SET_LOCAL_LOG_VERBOSE(true)
+SET_LOCAL_LOG_LEVEL(verbose)
 LOG_TITLE("ssl/connection")
-LOG_POSTFIX("\n");
 
 namespace anp
 {

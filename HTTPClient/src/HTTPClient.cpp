@@ -5,8 +5,7 @@
 #include "HTTPClient.h"
 #include <DMBCore.h>
 #include <utils/Log.h>
-LOG_POSTFIX("\n");
-LOG_PREFIX("[HTTPClient]: ");
+LOG_TITLE("HTTPClient");
 
 namespace
 {

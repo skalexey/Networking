@@ -9,10 +9,9 @@
 #include "tcp/client_base.h"
 #include <utils/Log.h>
 #include <utils/profiler.h>
-SET_LOCAL_LOG_VERBOSE(true)
-SET_LOCAL_LOG_DEBUG(true)
+SET_LOCAL_LOG_LEVEL(verbose)
 LOG_TITLE("tcp/client_base")
-LOG_POSTFIX("\n");
+
 using namespace std::chrono_literals;
 
 namespace anp

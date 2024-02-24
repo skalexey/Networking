@@ -15,9 +15,8 @@
 #include <tcp/client.h>
 #include <http/authenticator.h>
 
-LOG_PREFIX("[authenticator]: ");
-LOG_POSTFIX("\n");
-SET_LOCAL_LOG_DEBUG(true);
+LOG_TITLE("authenticator");
+SET_LOCAL_LOG_LEVEL(debug);
 namespace fs = std::filesystem;
 namespace ch = std::chrono;
 

@@ -8,9 +8,8 @@
 #include <utils/profiler.h>
 //#include <http/http_client_20.h>
 
-LOG_PREFIX("[http_client_20]: ");
-LOG_POSTFIX("\n");
-SET_LOCAL_LOG_DEBUG(true);
+LOG_TITLE("http_client_20");
+SET_LOCAL_LOG_LEVEL(debug);
 
 namespace anp
 {

@@ -10,9 +10,8 @@
 #include <utils/datetime.h>
 #include <http/uploader.h>
 
-LOG_PREFIX("[uploader]: ");
-LOG_POSTFIX("\n");
-SET_LOCAL_LOG_DEBUG(true);
+LOG_TITLE("uploader");
+SET_LOCAL_LOG_LEVEL(debug);
 
 namespace anp
 {

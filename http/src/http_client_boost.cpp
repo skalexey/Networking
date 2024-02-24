@@ -20,9 +20,8 @@
 #include <tcp/ssl/client.h>
 #include <http/http_client_boost.h>
 
-LOG_PREFIX("[http_client_boost]: ");
-LOG_POSTFIX("\n");
-SET_LOCAL_LOG_DEBUG(true);
+LOG_TITLE("http_client_boost");
+SET_LOCAL_LOG_LEVEL(debug);
 
 namespace beast = boost::beast;     // from <boost/beast.hpp>
 //namespace http = beast::http;       // from <boost/beast/http.hpp>

@@ -13,9 +13,8 @@
 #include <http/chunked_data_receiver.h>
 #include <http/http_client.h>
 
-LOG_PREFIX("[http_client]: ");
-LOG_POSTFIX("\n");
-SET_LOCAL_LOG_DEBUG(true);
+LOG_TITLE("http_client");
+SET_LOCAL_LOG_LEVEL(debug);
 
 namespace anp
 {

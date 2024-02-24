@@ -8,8 +8,7 @@
 #include <utils/string_utils.h>
 #include "TCPClient.h"
 #include <utils/Log.h>
-LOG_POSTFIX("\n");
-LOG_PREFIX("[TCPClient]: ");
+LOG_TITLE("TCPClient");
 
 void init_client(anp::tcp::client_base& client)
 {

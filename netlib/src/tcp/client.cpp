@@ -3,10 +3,8 @@
 
 #include "tcp/client.h"
 #include <utils/Log.h>
-SET_LOCAL_LOG_VERBOSE(true)
-SET_LOCAL_LOG_DEBUG(true)
+SET_LOCAL_LOG_LEVEL(verbose)
 LOG_TITLE("tcp/client")
-LOG_POSTFIX("\n");
 
 namespace anp
 {

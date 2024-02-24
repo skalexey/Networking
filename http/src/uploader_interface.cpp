@@ -2,9 +2,8 @@
 #include <http/authenticator.h>
 #include <utils/Log.h>
 
-LOG_PREFIX("[uploader_interface]: ");
-LOG_POSTFIX("\n");
-SET_LOCAL_LOG_DEBUG(true);
+LOG_TITLE("uploader_interface");
+SET_LOCAL_LOG_LEVEL(debug);
 
 namespace anp
 {
