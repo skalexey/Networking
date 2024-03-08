@@ -7,7 +7,7 @@
 #include <tcp/ssl/client.h>
 #include <utils/string_utils.h>
 #include "TCPClient.h"
-#include <utils/Log.h>
+#include <utils/log.h>
 LOG_TITLE("TCPClient");
 
 void init_client(anp::tcp::client_base& client)

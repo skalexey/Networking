@@ -4,7 +4,7 @@
 #include <utils/networking/http.h>
 #include "HTTPClient.h"
 #include <DMBCore.h>
-#include <utils/Log.h>
+#include <utils/log.h>
 LOG_TITLE("HTTPClient");
 
 namespace

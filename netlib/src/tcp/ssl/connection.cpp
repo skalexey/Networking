@@ -1,6 +1,6 @@
 #include <tcp/ssl/connection.h>
 #include <asio/ssl/rfc2818_verification.hpp>
-#include <utils/Log.h>
+#include <utils/log.h>
 #include <openssl/x509.h>
 #include <openssl/ssl.h>
 #include <boost/certify/extensions.hpp>

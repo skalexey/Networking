@@ -7,7 +7,7 @@
 #include <utils/datetime.h>
 #include <utils/base64.h>
 #include <utils/zip.h>
-#include <utils/Log.h>
+#include <utils/log.h>
 
 LOG_TITLE("url_uploader");
 SET_LOCAL_LOG_LEVEL(debug);

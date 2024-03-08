@@ -1,6 +1,6 @@
 ﻿#include <http/uploader_interface.h>
 #include <http/authenticator.h>
-#include <utils/Log.h>
+#include <utils/log.h>
 
 LOG_TITLE("uploader_interface");
 SET_LOCAL_LOG_LEVEL(debug);

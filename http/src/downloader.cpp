@@ -9,7 +9,7 @@
 #endif
 #include <fstream>
 #include <tcp/client.h>
-#include <utils/Log.h>
+#include <utils/log.h>
 #include <utils/string_utils.h>
 #include <tcp/client.h>
 #include <http/downloader.h>

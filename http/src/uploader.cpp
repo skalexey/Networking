@@ -4,7 +4,7 @@
 #include <format>
 #endif
 #include <fstream>
-#include <utils/Log.h>
+#include <utils/log.h>
 #include <utils/string_utils.h>
 #include <utils/file_utils.h>
 #include <utils/datetime.h>
