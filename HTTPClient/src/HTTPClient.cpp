@@ -38,13 +38,13 @@ int main()
 
 	anp::http_client c;
 	// Connect
-	std::string host = cfg["host"].AsString().Val();
-	int port = cfg["port"].AsNumber().Val();
+	std::string host = cfg["host"].as<vl::String>().Val();
+	int port = cfg["port"].as<vl::Number>().Val();
 	ep = {host, port};
 	// Setup the input logic
 	try
 	{
-		std::string msg = cfg["initial_command"].AsString().Val();
+		std::string msg = cfg["initial_command"].as<vl::String>().Val();
 		while (true)
 		{
 			std::cout << " > ";
