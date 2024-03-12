@@ -13,7 +13,7 @@ namespace anp
 {
 	struct values_t
 	{
-		using data_t = utils::ordered_map<std::string, std::string>;
+		using data_t = utils::ordered_hashmap<std::string, std::string>;
 		std::string to_string() const;
 		bool empty() const { return m_data.empty(); }
 		void add(const std::string& key, const std::string& value);

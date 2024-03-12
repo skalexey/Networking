@@ -20,7 +20,7 @@ namespace anp
 
 		struct headers_t
 		{
-			using data_t = utils::ordered_map<std::string, header>;
+			using data_t = utils::ordered_hashmap<std::string, header>;
 			headers_t() = default;
 			headers_t(const data_t& data) : m_data(data) {}
 			std::string to_string() const;
