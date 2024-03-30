@@ -24,10 +24,9 @@ namespace anp
 {
 	int authenticator::auth(const tcp::endpoint_t& ep, const std::string& path, const credentials& credentials)
 	{
-		query_t q = credentials.query();
-		q.path = path;
-		q.method = "GET";
-		return query(ep, q);
+		auth_async(ep, path, credentials, nullptr);
+		wait();
+		return errcode();
 	}
 
 	void authenticator::auth_async(const tcp::endpoint_t& ep, const std::string& path, const credentials& credentials, const anp::result_cb& on_result)
@@ -42,19 +41,19 @@ namespace anp
 				, int http_status
 			)
 			{
-				if (http_status != 200)
+				auto finalize = [self, on_result](erc e) -> bool
 				{
-					on_result(self->notify(erc::http_error));
-					return false;
-				}
+					self->notify(e);
+					if (on_result)
+						on_result(e);
+					return e == erc::no_error;
+				};
+				if (http_status != 200)
+					return finalize(erc::http_error);
 				std::string_view s(data, sz);
 				if (s.find("Authenticated successfully") == std::string::npos)
-				{
-					on_result(self->notify(erc::auth_error));
-					return false;
-				}
-				on_result(self->notify(erc::no_error));
-				return true;
+					return finalize(erc::auth_error);
+				return finalize(erc::no_error);
 			}
 		);
 	}
