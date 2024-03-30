@@ -36,6 +36,7 @@ namespace anp
 
 		private:
 			void on_connection_close();
+			void free_resources();
 
 		private:
 			std::unique_ptr<asio::io_context> m_ctx = nullptr;

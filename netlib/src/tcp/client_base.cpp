@@ -1,6 +1,7 @@
 // client_base.cpp : Defines the entry point for the application.
 //
 
+#include <cassert>
 #include <cstdlib>
 #include <vector>
 #include <iostream>
@@ -54,12 +55,9 @@ namespace anp
 			if (is_connected())
 				disconnect();
 			else
-			{
 				LOG_DEBUG("Already disconnected");
-			}
-			assert(std::this_thread::get_id() != m_ctx_thread_id);
-			if (m_thr_ctx.joinable())
-				m_thr_ctx.join();
+			free_resources();
+			assert(!m_thr_ctx.joinable() && "The thread should have been terminated in disconnect()");
 		}
 
 		bool client_base::connect(const std::string& host, int port, const anp::error_cb& on_connect)
@@ -82,12 +80,13 @@ namespace anp
 				}
 				catch (std::exception& ex)
 				{
-					std::cout << "Exception in context thread caught: '" << ex.what() << "'\n";
+					LOG_ERROR("Exception in context thread caught: '" << ex.what() << "'");
 				}
 				catch (...)
 				{
-					std::cout << "Exception in context thread caught\n";
+					LOG_ERROR("Exception in context thread caught");
 				}
+				LOCAL_VERBOSE("Context thread finished");
 			});
 			m_ctx_thread_id = m_thr_ctx.get_id();
 			try
@@ -135,65 +134,72 @@ namespace anp
 		void client_base::disconnect()
 		{
 			PROFILE_TIME("client_base::disconnect()");
+
 			if (is_connected())
 			{
+				LOG_VERBOSE("this_thread_id: " << std::this_thread::get_id() << ", m_ctx_thread_id: " << m_ctx_thread_id);
+				auto job = [self = this]()
+				{
+					self->m_connection->close();
+					LOCAL_VERBOSE(" Stop the context");
+					self->m_ctx->stop();
+					LOCAL_VERBOSE("		Context stopped");
+				};
 				if (std::this_thread::get_id() != m_ctx_thread_id)
-					asio::post(*m_ctx, [self = this] {
-						self->m_connection->close();
-					});
+					asio::post(*m_ctx, job);
 				else
-					m_connection->close();
+					job();
 
-				LOCAL_VERBOSE("	Stop the context");
-				m_ctx->stop();
-				LOCAL_VERBOSE("		Context stopped");
-				try
-				{
-					if (std::this_thread::get_id() != m_ctx_thread_id)
-					{
-						if (m_thr_ctx.joinable())
-						{
-							LOCAL_VERBOSE("		Join the thread...");
-							m_thr_ctx.join();
-							LOCAL_VERBOSE("		Thread is joined");
-						}
-						else
-						{
-							LOG_VERBOSE("Thread is not joinable");
-						}
-					}
-					else
-					{
-						LOG_VERBOSE("Won't join the thread cause we are already in that thread");
-					}
-				}
-				catch (std::system_error& e)
-				{
-					LOG_ERROR("Error while disconnecting: " << e.what());
-				}
-
-				LOG_VERBOSE("Reset the idle work");
-				m_idle_work.reset();
-				LOG_VERBOSE("Reset the connection");
-				m_connection.reset();
-				LOG_VERBOSE("Connection has been reset");
-				// TODO: check if everything is ok in the ELSE case of this IF
-				if (std::this_thread::get_id() != m_ctx_thread_id)
-				{
-					LOG_VERBOSE("Reset the context");
-					m_ctx.reset();
-				}
-				else
-				{
-					LOG_VERBOSE("Won't reset the context in this thread");
-				}
-				LOCAL_VERBOSE("	Resources destroyed");
-
+				free_resources();
 			}
 			else
 			{
 				LOCAL_VERBOSE("Disconnect called while already disconnected");
 			}
+		}
+
+		void client_base::free_resources()
+		{
+			try
+			{
+				if (m_thr_ctx.joinable())
+					if (std::this_thread::get_id() == m_ctx_thread_id)
+						m_thr_ctx.detach();
+					else // Wait for the job to complete
+					{
+						LOG_VERBOSE("Wait for the context thread to finish");
+						m_thr_ctx.join();
+						LOG_VERBOSE("Joined the context thread");
+					}
+			}
+			catch (std::system_error& e)
+			{
+				LOG_ERROR("Error while freeing resources: '" << e.what() << "'");
+			}
+
+			assert(!is_connected() && "It should have been disconnected from the job");
+
+			if (m_idle_work)
+			{
+				LOG_VERBOSE("Reset the idle work");
+				m_idle_work.release();
+			}
+			if (m_connection)
+			{
+				LOG_VERBOSE("Reset the connection");
+				m_connection.release();
+				LOG_VERBOSE("Connection has been reset");
+			}
+			
+			if (m_ctx)
+			{
+				if (std::this_thread::get_id() != m_ctx_thread_id)
+					LOG_VERBOSE("Release the context");
+				else
+					LOG_VERBOSE("Release the context from its thread");
+				m_ctx.release();
+			}
+			LOCAL_VERBOSE("	Resources destroyed");
 		}
 
 		bool client_base::is_connected() const

@@ -99,7 +99,10 @@ namespace anp
 			try
 			{
 				WaitClientConnection();
-				m_thr_ctx = std::thread([this]() { m_ctx->run(); });
+				m_thr_ctx = std::thread([this]() {
+					m_ctx->run();
+					LOCAL_VERBOSE("Context thread finished");
+				});
 				m_ctx_thread_id = m_thr_ctx.get_id();
 
 				LOCAL_VERBOSE("Started");
