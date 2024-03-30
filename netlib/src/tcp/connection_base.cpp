@@ -146,7 +146,7 @@ namespace anp
 			if (on_response)
 			{
 				auto subscriber = std::make_shared<bool>();
-				subscribe_on_receive(subscriber.get(), [&, self = this, on_response, subscriber](const std::vector<char>& buf, std::size_t length, int id) {
+				subscribe_on_receive(subscriber.get(), [self = this, on_response, subscriber](const std::vector<char>& buf, std::size_t length, int id) {
 					auto cb = on_response;
 					self->unsubscribe_from_receive(subscriber.get());
 					cb(buf);
