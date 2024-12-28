@@ -16,6 +16,7 @@ function update_scripts()
 	cp "$scripts_dir/include/os.sh" ./netlib/
 	cp "$scripts_dir/include/input.sh" .
 	cp "$scripts_dir/include/file_utils.sh" .
+	cp "$scripts_dir/include/file_utils.py" .
 	cp "$scripts_dir/include/net_utils.sh" .
 	cp "$templates_dir/Scripts/update_cmake_modules.sh" .
 
